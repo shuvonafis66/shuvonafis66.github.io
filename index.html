@@ -111,20 +111,22 @@
 
   /* ---------- Gallery ---------- */
   .gallery{
-    display:grid;
-    grid-template-columns:repeat(6, 1fr);
-    gap:14px;
+    columns:3 220px;
+    column-gap:14px;
   }
   .frame{
     position:relative;
     background:var(--bg-raised);
     border:1px solid var(--line);
-    aspect-ratio:4/5;
     overflow:hidden;
     cursor:pointer;
+    break-inside:avoid;
+    margin-bottom:14px;
+    display:block;
   }
-  .frame img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .frame img{ width:100%; height:auto; display:block; }
   .frame.ph{ /* placeholder styling */
+    aspect-ratio:4/5;
     display:flex; align-items:center; justify-content:center;
     flex-direction:column; gap:10px;
     color:var(--paper-dim); text-align:center; padding:20px;
@@ -140,14 +142,11 @@
   }
   .frame:hover .cap{ opacity:1; }
 
-  .frame.span-2{ grid-column:span 2; }
-  .frame.span-3{ grid-column:span 3; }
-  .frame.tall{ grid-row:span 2; aspect-ratio:auto; }
-
   @media (max-width:900px){
-    .gallery{ grid-template-columns:repeat(2, 1fr); }
-    .frame.span-2, .frame.span-3{ grid-column:span 2; }
-    .frame.tall{ grid-row:span 1; aspect-ratio:4/5; }
+    .gallery{ columns:2 180px; }
+  }
+  @media (max-width:600px){
+    .gallery{ columns:1; }
   }
 
   /* ---------- About ---------- */
@@ -252,7 +251,7 @@
     <p>Street, architecture, and quiet corners of Vienna — shot while walking between classes.</p>
   </div>
   <div class="gallery" id="gallery">
-    <div class="frame span-2 tall" data-cap="WU Wien campus — Vienna">
+    <div class="frame" data-cap="WU Wien campus — Vienna">
       <img src="assets/wu-campus.jpg" alt="WU Wien campus building with angular architecture">
     </div>
     <div class="frame" data-cap="Street mural — Vienna">
@@ -261,19 +260,19 @@
     <div class="frame" data-cap="Free Library, WU Campus">
       <img src="assets/free-library.jpg" alt="Outdoor free library book exchange on campus">
     </div>
-    <div class="frame span-2" data-cap="WU Wien — campus signage">
+    <div class="frame" data-cap="WU Wien — campus signage">
       <img src="assets/wu-sign.jpg" alt="Close-up of WU Wien campus sign with books behind it">
     </div>
     <div class="frame" data-cap="Alte Donau — Vienna">
       <img src="assets/swan-1.jpg" alt="A swan swimming on calm dark water">
     </div>
-    <div class="frame span-3" data-cap="Alte Donau, near the dock — Vienna">
+    <div class="frame" data-cap="Alte Donau, near the dock — Vienna">
       <img src="assets/swan-2.jpg" alt="A swan swimming beside a wooden dock with metal railing">
     </div>
-    <div class="frame tall" data-cap="U-Bahn platform, Vienna">
+    <div class="frame" data-cap="U-Bahn platform, Vienna">
       <img src="assets/ubahn.jpg" alt="Vienna U-Bahn subway platform with departure sign and clock">
     </div>
-    <div class="frame span-2" data-cap="Lily pond — Vienna">
+    <div class="frame" data-cap="Lily pond — Vienna">
       <img src="assets/lily-pond.jpg" alt="Pond covered in water lilies and reeds">
     </div>
     <div class="frame" data-cap="Woodland trail — Vienna">
@@ -282,7 +281,7 @@
     <div class="frame" data-cap="Old Vienna architecture">
       <img src="assets/dome.jpg" alt="Historic building facade with a domed rooftop against blue sky">
     </div>
-    <div class="frame span-2" data-cap="Straßenbahn — Vienna">
+    <div class="frame" data-cap="Straßenbahn — Vienna">
       <img src="assets/tram.jpg" alt="Red and white Vienna tram on a cobblestone street">
     </div>
   </div>
