@@ -9,215 +9,101 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #0f0f0e;
-    --bg-raised: #171716;
-    --line: #2a2a28;
-    --paper: #eee9df;
-    --paper-dim: #9c968a;
-    --clay: #b98a5a;
-    --focus: #d7b98a;
+    --bg:#0f0f0e; --bg-raised:#171716; --line:#2a2a28;
+    --paper:#eee9df; --paper-dim:#9c968a; --clay:#b98a5a; --focus:#d7b98a;
   }
-
   *{ margin:0; padding:0; box-sizing:border-box; }
-
   html{ scroll-behavior:smooth; }
-
-  body{
-    background:var(--bg);
-    color:var(--paper);
-    font-family:'Work Sans', sans-serif;
-    font-weight:300;
-    line-height:1.6;
-    overflow-x:hidden;
-  }
-
+  body{ background:var(--bg); color:var(--paper); font-family:'Work Sans',sans-serif; font-weight:300; line-height:1.6; overflow-x:hidden; }
   a{ color:inherit; }
-
   ::selection{ background:var(--clay); color:#0f0f0e; }
-
   :focus-visible{ outline:2px solid var(--focus); outline-offset:3px; }
+  @media (prefers-reduced-motion:reduce){ *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; } }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:400; letter-spacing:-0.01em; }
+  img{ -webkit-touch-callout:none; }
 
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
-  }
-
-  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:400; letter-spacing:-0.01em; }
-
-  /* ---------- Nav ---------- */
-  nav{
-    position:fixed; top:0; left:0; right:0; z-index:100;
-    display:flex; justify-content:space-between; align-items:center;
-    padding:28px 6vw;
-    mix-blend-mode:difference;
-  }
-  .nav-name{ font-family:'Fraunces', serif; font-size:1.05rem; }
+  nav{ position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:28px 6vw; mix-blend-mode:difference; }
+  .nav-name{ font-family:'Fraunces',serif; font-size:1.05rem; }
   .nav-links{ display:flex; gap:32px; list-style:none; font-size:0.9rem; }
   .nav-links a{ text-decoration:none; position:relative; }
-  .nav-links a::after{
-    content:''; position:absolute; left:0; bottom:-4px; width:0; height:1px;
-    background:var(--paper); transition:width 0.3s ease;
-  }
+  .nav-links a::after{ content:''; position:absolute; left:0; bottom:-4px; width:0; height:1px; background:var(--paper); transition:width .3s ease; }
   .nav-links a:hover::after{ width:100%; }
   @media (max-width:640px){ .nav-links{ display:none; } }
 
-  /* ---------- Hero ---------- */
-  .hero{
-    min-height:100svh;
-    display:flex; flex-direction:column; justify-content:flex-end;
-    padding:0 6vw 8vh;
-    position:relative;
-  }
-  .hero-bg{
-    position:absolute; inset:0;
-    background:
-      radial-gradient(ellipse at 30% 20%, #23201c 0%, transparent 55%),
-      linear-gradient(180deg, #100f0e 0%, #0a0a09 100%);
-  }
+  .hero{ min-height:100svh; display:flex; flex-direction:column; justify-content:flex-end; padding:0 6vw 8vh; position:relative; }
+  .hero-bg{ position:absolute; inset:0; background:radial-gradient(ellipse at 30% 20%,#23201c 0%,transparent 55%),linear-gradient(180deg,#100f0e 0%,#0a0a09 100%); }
   .hero-content{ position:relative; z-index:2; }
-  .hero-eyebrow{
-    font-size:0.85rem; color:var(--clay); margin-bottom:18px;
-    display:flex; align-items:center; gap:14px;
-  }
+  .hero-eyebrow{ font-size:.85rem; color:var(--clay); margin-bottom:18px; display:flex; align-items:center; gap:14px; }
   .hero-eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--clay); }
-  .hero h1{
-    font-size:clamp(3rem, 9vw, 7.5rem);
-    line-height:0.95;
-    max-width:16ch;
-  }
-  .hero-sub{
-    margin-top:28px;
-    max-width:38ch;
-    font-size:1.1rem;
-    color:var(--paper-dim);
-  }
-  .hero-meta{
-    margin-top:56px;
-    display:flex; gap:48px; flex-wrap:wrap;
-    font-size:0.85rem; color:var(--paper-dim);
-    border-top:1px solid var(--line);
-    padding-top:24px;
-  }
-  .hero-meta strong{ display:block; color:var(--paper); font-weight:400; font-family:'Fraunces', serif; font-size:1.1rem; margin-bottom:4px; }
+  .hero h1{ font-size:clamp(3rem,9vw,7.5rem); line-height:.95; max-width:16ch; }
+  .hero-sub{ margin-top:28px; max-width:38ch; font-size:1.1rem; color:var(--paper-dim); }
+  .hero-meta{ margin-top:56px; display:flex; gap:48px; flex-wrap:wrap; font-size:.85rem; color:var(--paper-dim); border-top:1px solid var(--line); padding-top:24px; }
+  .hero-meta strong{ display:block; color:var(--paper); font-weight:400; font-family:'Fraunces',serif; font-size:1.1rem; margin-bottom:4px; }
 
-  /* ---------- Section shell ---------- */
   section{ padding:14vh 6vw; }
-  .section-head{
-    display:flex; justify-content:space-between; align-items:flex-end;
-    gap:24px; margin-bottom:6vh; flex-wrap:wrap;
-    border-bottom:1px solid var(--line); padding-bottom:24px;
-  }
-  .section-head h2{ font-size:clamp(2rem, 4vw, 3rem); }
-  .section-head p{ max-width:34ch; color:var(--paper-dim); font-size:0.95rem; }
+  .section-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:6vh; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:24px; }
+  .section-head h2{ font-size:clamp(2rem,4vw,3rem); }
+  .section-head p{ max-width:34ch; color:var(--paper-dim); font-size:.95rem; }
 
-  /* ---------- Gallery ---------- */
-  .gallery{
-    columns:3 220px;
-    column-gap:14px;
-  }
-  .frame{
-    position:relative;
-    background:var(--bg-raised);
-    border:1px solid var(--line);
-    overflow:hidden;
-    cursor:pointer;
-    break-inside:avoid;
-    margin-bottom:14px;
-    display:block;
-  }
-  .frame img{ width:100%; height:auto; display:block; }
-  .frame.ph{ /* placeholder styling */
-    aspect-ratio:4/5;
-    display:flex; align-items:center; justify-content:center;
-    flex-direction:column; gap:10px;
-    color:var(--paper-dim); text-align:center; padding:20px;
-  }
-  .frame.ph .num{ font-family:'Fraunces', serif; font-size:1.6rem; color:var(--line); }
-  .frame.ph .lbl{ font-size:0.75rem; letter-spacing:0.02em; }
-  .frame .cap{
-    position:absolute; left:0; right:0; bottom:0;
-    padding:14px 16px;
-    background:linear-gradient(0deg, rgba(0,0,0,0.75), transparent);
-    font-size:0.8rem; color:var(--paper);
-    opacity:0; transition:opacity 0.25s ease;
-  }
+  /* place jump-nav */
+  .place-nav{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:7vh; }
+  .place-nav a{ text-decoration:none; font-size:.8rem; color:var(--paper-dim); border:1px solid var(--line); padding:8px 16px; border-radius:100px; transition:border-color .2s,color .2s; }
+  .place-nav a:hover, .place-nav a.active{ border-color:var(--clay); color:var(--clay); }
+
+  .place-block{ margin-bottom:11vh; scroll-margin-top:110px; }
+  .place-block:last-child{ margin-bottom:0; }
+  .place-title{ display:flex; align-items:baseline; gap:18px; flex-wrap:wrap; margin-bottom:2.2vh; }
+  .place-title h3{ font-size:clamp(1.5rem,3vw,2.1rem); }
+  .place-title .meta{ font-size:.8rem; color:var(--paper-dim); }
+
+  .gallery{ columns:3 220px; column-gap:14px; }
+  .frame{ position:relative; background:var(--bg-raised); border:1px solid var(--line); overflow:hidden; cursor:pointer; break-inside:avoid; margin-bottom:14px; display:block; }
+  .frame img{ width:100%; height:auto; display:block; pointer-events:none; user-select:none; }
+  .frame .cap{ position:absolute; left:0; right:0; bottom:0; padding:14px 16px; background:linear-gradient(0deg,rgba(0,0,0,.75),transparent); font-size:.8rem; color:var(--paper); opacity:0; transition:opacity .25s ease; }
   .frame:hover .cap{ opacity:1; }
+  @media (max-width:900px){ .gallery{ columns:2 180px; } }
+  @media (max-width:600px){ .gallery{ columns:1; } }
 
-  @media (max-width:900px){
-    .gallery{ columns:2 180px; }
-  }
-  @media (max-width:600px){
-    .gallery{ columns:1; }
-  }
+  .empty-state{ color:var(--paper-dim); font-size:.95rem; border:1px dashed var(--line); padding:40px; text-align:center; }
 
-  /* ---------- About ---------- */
-  .about{
-    display:grid;
-    grid-template-columns:0.9fr 1.1fr;
-    gap:8vw;
-    align-items:start;
-  }
-  .about-portrait{
-    aspect-ratio:3/4;
-    background:var(--bg-raised);
-    border:1px solid var(--line);
-    display:flex; align-items:center; justify-content:center;
-    flex-direction:column; gap:10px;
-    color:var(--paper-dim); text-align:center; padding:20px;
-    overflow:hidden;
-  }
-  .about-portrait img{ width:100%; height:100%; object-fit:cover; }
+  .about{ display:grid; grid-template-columns:0.9fr 1.1fr; gap:8vw; align-items:start; }
+  .about-portrait{ aspect-ratio:3/4; background:var(--bg-raised); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px; color:var(--paper-dim); text-align:center; padding:20px; overflow:hidden; }
+  .about-portrait img{ width:100%; height:100%; object-fit:cover; pointer-events:none; }
   .about-text p{ margin-bottom:1.4em; color:var(--paper-dim); max-width:56ch; }
-  .about-text p:first-of-type{ color:var(--paper); font-size:1.2rem; font-family:'Fraunces', serif; }
-  .skills{
-    display:flex; flex-wrap:wrap; gap:10px; margin-top:32px;
-  }
-  .skills span{
-    border:1px solid var(--line); padding:8px 16px; border-radius:100px;
-    font-size:0.82rem; color:var(--paper-dim);
-  }
+  .about-text p:first-of-type{ color:var(--paper); font-size:1.2rem; font-family:'Fraunces',serif; }
+  .skills{ display:flex; flex-wrap:wrap; gap:10px; margin-top:32px; }
+  .skills span{ border:1px solid var(--line); padding:8px 16px; border-radius:100px; font-size:.82rem; color:var(--paper-dim); }
   @media (max-width:800px){ .about{ grid-template-columns:1fr; } .about-portrait{ max-width:280px; } }
 
-  /* ---------- Contact ---------- */
-  .contact{
-    display:flex; flex-direction:column; align-items:flex-start;
-  }
-  .contact h2{ font-size:clamp(2.2rem, 6vw, 4.5rem); max-width:14ch; margin-bottom:40px; }
-  .contact-row{
-    display:flex; gap:60px; flex-wrap:wrap;
-    border-top:1px solid var(--line); padding-top:32px; width:100%;
-  }
-  .contact-col span{ display:block; font-size:0.78rem; color:var(--paper-dim); margin-bottom:8px; }
+  .contact{ display:flex; flex-direction:column; align-items:flex-start; }
+  .contact h2{ font-size:clamp(2.2rem,6vw,4.5rem); max-width:14ch; margin-bottom:40px; }
+  .contact-row{ display:flex; gap:60px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:32px; width:100%; }
+  .contact-col span{ display:block; font-size:.78rem; color:var(--paper-dim); margin-bottom:8px; }
   .contact-col a{ font-size:1.05rem; text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:2px; }
   .contact-col a:hover{ border-color:var(--clay); color:var(--clay); }
 
-  footer{
-    padding:28px 6vw 40px;
-    display:flex; justify-content:space-between;
-    font-size:0.78rem; color:var(--paper-dim);
-    flex-wrap:wrap; gap:10px;
-  }
+  footer{ padding:28px 6vw 40px; display:flex; justify-content:space-between; font-size:.78rem; color:var(--paper-dim); flex-wrap:wrap; gap:10px; }
+  footer a{ color:var(--paper-dim); text-decoration:none; opacity:.5; }
+  footer a:hover{ opacity:1; }
 
-  /* ---------- Lightbox ---------- */
-  .lightbox{
-    position:fixed; inset:0; background:rgba(8,8,7,0.94);
-    display:none; align-items:center; justify-content:center;
-    z-index:200; padding:5vw;
-  }
+  /* Lightbox with 3D glance */
+  .lightbox{ position:fixed; inset:0; background:rgba(8,8,7,.94); display:none; align-items:center; justify-content:center; z-index:200; padding:5vw; perspective:1600px; }
   .lightbox.open{ display:flex; }
-  .lightbox-inner{ max-width:900px; text-align:center; }
-  .lightbox-inner .box{
-    aspect-ratio:4/5; max-height:75vh; margin:0 auto;
-    background:var(--bg-raised); border:1px solid var(--line);
-    display:flex; align-items:center; justify-content:center;
-    color:var(--paper-dim); overflow:hidden;
-  }
-  .lightbox-inner .box img{ width:100%; height:100%; object-fit:contain; }
-  .lightbox-cap{ margin-top:18px; color:var(--paper-dim); font-size:0.9rem; }
-  .lightbox-close{
-    position:absolute; top:28px; right:6vw; font-size:0.9rem;
-    background:none; border:none; color:var(--paper); cursor:pointer;
-    font-family:'Work Sans', sans-serif;
-  }
+  .lightbox-inner{ max-width:900px; width:100%; text-align:center; }
+  .lightbox-stage{ aspect-ratio:4/5; max-height:72vh; margin:0 auto; transform-style:preserve-3d; }
+  .lightbox-stage .box{ width:100%; height:100%; background:var(--bg-raised); border:1px solid var(--line); overflow:hidden; transform-style:preserve-3d; transform:rotateY(-90deg) scale(.9); opacity:0; transition:transform .5s cubic-bezier(.2,.8,.2,1), opacity .4s ease; will-change:transform; }
+  .lightbox.open .lightbox-stage .box{ transform:rotateY(0deg) rotateX(0deg) scale(1); opacity:1; }
+  .lightbox-stage .box img{ width:100%; height:100%; object-fit:contain; pointer-events:none; user-select:none; -webkit-user-drag:none; }
+  .lightbox-cap{ margin-top:20px; }
+  .lightbox-cap .place{ font-family:'Fraunces',serif; font-size:1.2rem; }
+  .lightbox-cap .story{ margin-top:8px; color:var(--paper-dim); font-size:.9rem; max-width:56ch; margin-left:auto; margin-right:auto; }
+  .lightbox-cap .date{ margin-top:8px; color:var(--clay); font-size:.75rem; letter-spacing:.03em; }
+  .lightbox-close{ position:absolute; top:28px; right:6vw; font-size:.9rem; background:none; border:none; color:var(--paper); cursor:pointer; font-family:'Work Sans',sans-serif; }
+  .lightbox-nav{ position:absolute; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--paper-dim); font-size:1.8rem; cursor:pointer; padding:10px 16px; }
+  .lightbox-nav:hover{ color:var(--paper); }
+  .lightbox-prev{ left:2vw; }
+  .lightbox-next{ right:2vw; }
+  @media (max-width:640px){ .lightbox-nav{ display:none; } }
 </style>
 </head>
 <body>
@@ -236,7 +122,7 @@
   <div class="hero-content">
     <div class="hero-eyebrow"><span class="dot"></span> Photographer, Vienna</div>
     <h1>Frames that hold a little longer than a glance.</h1>
-    <p class="hero-sub">Originally from Bangladesh, now studying and shooting in Vienna — I make images out of streets, architecture, and quiet, unremarkable moments.</p>
+    <p class="hero-sub">Originally from Bangladesh, now studying and shooting in Vienna — I make images out of streets, architecture, and the corners of Austria I find while I'm out there.</p>
     <div class="hero-meta">
       <div><strong>Vienna</strong>based &amp; shooting</div>
       <div><strong>WU Wien</strong>MSc Digital Economy</div>
@@ -248,63 +134,28 @@
 <section id="work">
   <div class="section-head">
     <h2>Selected work</h2>
-    <p>Street, architecture, and quiet corners of Vienna — shot while walking between classes.</p>
+    <p>A running trail of places across Austria — grouped by where each frame was taken.</p>
   </div>
-  <div class="gallery" id="gallery">
-    <div class="frame" data-cap="WU Wien campus — Vienna">
-      <img src="assets/wu-campus.jpg" alt="WU Wien campus building with angular architecture">
-    </div>
-    <div class="frame" data-cap="Street mural — Vienna">
-      <img src="assets/street-art.jpg" alt="Large mural of a violinist on a building facade">
-    </div>
-    <div class="frame" data-cap="Free Library, WU Campus">
-      <img src="assets/free-library.jpg" alt="Outdoor free library book exchange on campus">
-    </div>
-    <div class="frame" data-cap="WU Wien — campus signage">
-      <img src="assets/wu-sign.jpg" alt="Close-up of WU Wien campus sign with books behind it">
-    </div>
-    <div class="frame" data-cap="Alte Donau — Vienna">
-      <img src="assets/swan-1.jpg" alt="A swan swimming on calm dark water">
-    </div>
-    <div class="frame" data-cap="Alte Donau, near the dock — Vienna">
-      <img src="assets/swan-2.jpg" alt="A swan swimming beside a wooden dock with metal railing">
-    </div>
-    <div class="frame" data-cap="U-Bahn platform, Vienna">
-      <img src="assets/ubahn.jpg" alt="Vienna U-Bahn subway platform with departure sign and clock">
-    </div>
-    <div class="frame" data-cap="Lily pond — Vienna">
-      <img src="assets/lily-pond.jpg" alt="Pond covered in water lilies and reeds">
-    </div>
-    <div class="frame" data-cap="Woodland trail — Vienna">
-      <img src="assets/tree.jpg" alt="Tree trunk with ivy growing in a green forest">
-    </div>
-    <div class="frame" data-cap="Old Vienna architecture">
-      <img src="assets/dome.jpg" alt="Historic building facade with a domed rooftop against blue sky">
-    </div>
-    <div class="frame" data-cap="Straßenbahn — Vienna">
-      <img src="assets/tram.jpg" alt="Red and white Vienna tram on a cobblestone street">
-    </div>
-  </div>
+  <nav class="place-nav" id="placeNav"></nav>
+  <div id="gallery-root"></div>
 </section>
 
 <section id="about">
-  <div class="section-head">
-    <h2>About</h2>
-  </div>
+  <div class="section-head"><h2>About</h2></div>
   <div class="about">
     <div class="about-portrait" id="portrait">
-      <div class="num" style="font-family:'Fraunces',serif;font-size:1.6rem;color:var(--line);">Photo</div>
-      <div class="lbl" style="font-size:0.75rem;">Replace with your portrait</div>
+      <div style="font-family:'Fraunces',serif;font-size:1.6rem;color:var(--line);">Photo</div>
+      <div style="font-size:.75rem;">Add your portrait via the admin page</div>
     </div>
     <div class="about-text">
       <p>I'm Al Nafis Fuad Shuvo, an international student from Bangladesh, currently based in Vienna, Austria.</p>
-      <p>I'm pursuing an MSc in Digital Economy at WU Wien. Photography is what I do between lectures and commutes — mostly street scenes, campus life, architecture, and quiet corners of the city I keep discovering as I settle in here.</p>
-      <p>Write a line or two here about what you're looking for next — collaborations, campus shoots, or just sharing more of the city as you see it.</p>
+      <p>I'm pursuing an MSc in Digital Economy at WU Wien. Photography is what I do between lectures, commutes, and trips around the country — street scenes, architecture, and the quiet corners of Austria I keep finding as I travel.</p>
+      <p>Every photo below is tied to the place I took it — this page grows as I go.</p>
       <div class="skills">
         <span>Street Photography</span>
         <span>Architecture</span>
-        <span>Campus Life</span>
-        <span>Vienna</span>
+        <span>Travel</span>
+        <span>Austria</span>
       </div>
     </div>
   </div>
@@ -313,22 +164,9 @@
 <section id="contact">
   <h2>Let's make an image worth keeping.</h2>
   <div class="contact-row">
-    <div class="contact-col">
-      <span>Email</span>
-      <a href="mailto:shuvonafis66@gmail.com">shuvonafis66@gmail.com</a>
-    </div>
-    <div class="contact-col">
-      <span>Instagram</span>
-      <a href="https://instagram.com/al_nafis_fuad_shuvo" target="_blank" rel="noopener">@al_nafis_fuad_shuvo</a>
-    </div>
-    <div class="contact-col">
-      <span>LinkedIn</span>
-      <a href="https://linkedin.com/in/nafisfuadshuvo" target="_blank" rel="noopener">nafisfuadshuvo</a>
-    </div>
-    <div class="contact-col">
-      <span>Location</span>
-      <a href="#" style="border:none;">Dhaka, Bangladesh</a>
-    </div>
+    <div class="contact-col"><span>Email</span><a href="mailto:shuvonafis66@gmail.com">shuvonafis66@gmail.com</a></div>
+    <div class="contact-col"><span>Instagram</span><a href="https://instagram.com/al_nafis_fuad_shuvo" target="_blank" rel="noopener">@al_nafis_fuad_shuvo</a></div>
+    <div class="contact-col"><span>LinkedIn</span><a href="https://linkedin.com/in/nafisfuadshuvo" target="_blank" rel="noopener">nafisfuadshuvo</a></div>
   </div>
 </section>
 
@@ -339,31 +177,143 @@
 
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" id="lightboxClose">Close ✕</button>
+  <button class="lightbox-nav lightbox-prev" id="prevBtn" aria-label="Previous">‹</button>
+  <button class="lightbox-nav lightbox-next" id="nextBtn" aria-label="Next">›</button>
   <div class="lightbox-inner">
-    <div class="box" id="lightboxBox"></div>
-    <div class="lightbox-cap" id="lightboxCap"></div>
+    <div class="lightbox-stage" id="stage"><div class="box" id="box"></div></div>
+    <div class="lightbox-cap">
+      <div class="place" id="capPlace"></div>
+      <div class="story" id="capStory"></div>
+      <div class="date" id="capDate"></div>
+    </div>
   </div>
 </div>
 
 <script>
-  document.getElementById('year').textContent = new Date().getFullYear();
+document.getElementById('year').textContent = new Date().getFullYear();
 
-  const lightbox = document.getElementById('lightbox');
-  const lightboxBox = document.getElementById('lightboxBox');
-  const lightboxCap = document.getElementById('lightboxCap');
+// Prevent right-click save and dragging on all images (basic deterrent only —
+// nothing on the open web can fully stop a determined download, e.g. screenshots)
+document.addEventListener('contextmenu', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });
+document.addEventListener('dragstart', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });
 
-  document.querySelectorAll('.frame').forEach(frame => {
-    frame.addEventListener('click', () => {
-      const img = frame.querySelector('img');
-      lightboxBox.innerHTML = img ? img.outerHTML : '<div class="lbl" style="color:var(--paper-dim)">Add a photo here to preview it in this lightbox</div>';
-      lightboxCap.textContent = frame.dataset.cap || '';
-      lightbox.classList.add('open');
-    });
+let photos = [];
+let currentIndex = 0;
+
+async function loadPhotos(){
+  try{
+    const res = await fetch('data/photos.json', { cache:'no-store' });
+    if(!res.ok) throw new Error('no data file');
+    photos = await res.json();
+  }catch(e){
+    photos = [];
+  }
+  render();
+}
+
+function groupByPlace(list){
+  const groups = {};
+  const order = [];
+  list.forEach(p => {
+    if(!groups[p.place]){ groups[p.place] = []; order.push(p.place); }
+    groups[p.place].push(p);
+  });
+  return order.map(place => ({ place, items: groups[place] }));
+}
+
+function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+
+function render(){
+  const root = document.getElementById('gallery-root');
+  const nav = document.getElementById('placeNav');
+  nav.innerHTML = '';
+  root.innerHTML = '';
+
+  if(!photos.length){
+    root.innerHTML = '<div class="empty-state">No photos yet. Add your first one from the admin page — upload a photo, name the place, and it shows up here.</div>';
+    return;
+  }
+
+  const groups = groupByPlace(photos);
+
+  groups.forEach(g => {
+    const a = document.createElement('a');
+    a.href = '#' + slug(g.place);
+    a.textContent = g.place;
+    nav.appendChild(a);
   });
 
-  document.getElementById('lightboxClose').addEventListener('click', () => lightbox.classList.remove('open'));
-  lightbox.addEventListener('click', (e) => { if(e.target === lightbox) lightbox.classList.remove('open'); });
-  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') lightbox.classList.remove('open'); });
+  groups.forEach(g => {
+    const block = document.createElement('div');
+    block.className = 'place-block';
+    block.id = slug(g.place);
+
+    const dates = g.items.map(p => p.date).filter(Boolean).sort();
+    const range = dates.length ? (dates[0] === dates[dates.length-1] ? dates[0] : dates[0] + ' — ' + dates[dates.length-1]) : '';
+
+    block.innerHTML = `
+      <div class="place-title">
+        <h3>${g.place}</h3>
+        <span class="meta">${g.items.length} photo${g.items.length>1?'s':''}${range ? ' · ' + range : ''}</span>
+      </div>
+      <div class="gallery"></div>
+    `;
+    const gal = block.querySelector('.gallery');
+    g.items.forEach(p => {
+      const frame = document.createElement('div');
+      frame.className = 'frame';
+      frame.innerHTML = `<img src="${p.image}" alt="${(p.story||g.place).replace(/"/g,'&quot;')}" loading="lazy"><div class="cap">${p.story ? p.story.slice(0,80) : g.place}</div>`;
+      frame.addEventListener('click', () => openLightbox(photos.indexOf(p)));
+      gal.appendChild(frame);
+    });
+    root.appendChild(block);
+  });
+}
+
+const lightbox = document.getElementById('lightbox');
+const box = document.getElementById('box');
+const stage = document.getElementById('stage');
+
+function openLightbox(index){
+  currentIndex = index;
+  showPhoto();
+  lightbox.classList.add('open');
+}
+
+function showPhoto(){
+  const p = photos[currentIndex];
+  if(!p) return;
+  box.innerHTML = `<img src="${p.image}" alt="">`;
+  document.getElementById('capPlace').textContent = p.place || '';
+  document.getElementById('capStory').textContent = p.story || '';
+  document.getElementById('capDate').textContent = p.date || '';
+}
+
+document.getElementById('lightboxClose').addEventListener('click', () => lightbox.classList.remove('open'));
+lightbox.addEventListener('click', e => { if(e.target === lightbox) lightbox.classList.remove('open'); });
+document.addEventListener('keydown', e => {
+  if(!lightbox.classList.contains('open')) return;
+  if(e.key === 'Escape') lightbox.classList.remove('open');
+  if(e.key === 'ArrowRight') step(1);
+  if(e.key === 'ArrowLeft') step(-1);
+});
+document.getElementById('nextBtn').addEventListener('click', () => step(1));
+document.getElementById('prevBtn').addEventListener('click', () => step(-1));
+function step(dir){
+  currentIndex = (currentIndex + dir + photos.length) % photos.length;
+  showPhoto();
+}
+
+// subtle 3D "glance" tilt following the pointer, while open
+stage.addEventListener('mousemove', e => {
+  const r = stage.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width - 0.5;
+  const y = (e.clientY - r.top) / r.height - 0.5;
+  box.style.transform = `rotateY(${x*14}deg) rotateX(${-y*14}deg) scale(1.02)`;
+});
+stage.addEventListener('mouseleave', () => { box.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)'; });
+
+loadPhotos();
 </script>
 
 </body>
