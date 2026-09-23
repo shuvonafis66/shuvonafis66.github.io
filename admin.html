@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Manage photos — private</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#0f0f0e; --bg-raised:#171716; --line:#2a2a28; --paper:#eee9df; --paper-dim:#9c968a; --clay:#b98a5a; --ok:#7fae7f; --err:#c97a6a; }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{ background:var(--bg); color:var(--paper); font-family:'Work Sans',sans-serif; font-weight:300; line-height:1.6; padding:6vh 6vw 10vh; max-width:760px; margin:0 auto; }
+  h1{ font-family:'Fraunces',serif; font-weight:400; font-size:2rem; margin-bottom:6px; }
+  .sub{ color:var(--paper-dim); font-size:.9rem; margin-bottom:5vh; }
+  h2{ font-family:'Fraunces',serif; font-weight:400; font-size:1.2rem; margin:5vh 0 18px; border-top:1px solid var(--line); padding-top:5vh; }
+  .card{ background:var(--bg-raised); border:1px solid var(--line); padding:28px; }
+  label{ display:block; font-size:.8rem; color:var(--paper-dim); margin-bottom:6px; margin-top:18px; }
+  label:first-child{ margin-top:0; }
+  input[type=text], input[type=password], input[type=date], textarea{
+    width:100%; background:var(--bg); border:1px solid var(--line); color:var(--paper);
+    padding:12px 14px; font-family:'Work Sans',sans-serif; font-size:.95rem; border-radius:2px;
+  }
+  input:focus, textarea:focus{ outline:none; border-color:var(--clay); }
+  textarea{ resize:vertical; min-height:70px; }
+  input[type=file]{ width:100%; color:var(--paper-dim); font-size:.85rem; margin-top:2px; }
+  button{ margin-top:26px; background:var(--clay); color:#0f0f0e; border:none; padding:13px 26px; font-size:.9rem; font-weight:500; cursor:pointer; border-radius:2px; }
+  button:hover{ opacity:.9; }
+  button.secondary{ background:none; border:1px solid var(--line); color:var(--paper-dim); }
+  button.danger{ background:none; border:1px solid var(--err); color:var(--err); padding:6px 12px; font-size:.75rem; margin-top:0; }
+  .msg{ margin-top:16px; font-size:.85rem; display:none; padding:10px 14px; border-radius:2px; }
+  .msg.ok{ display:block; background:rgba(127,174,127,.12); color:var(--ok); }
+  .msg.err{ display:block; background:rgba(201,122,106,.12); color:var(--err); }
+  .note{ font-size:.8rem; color:var(--paper-dim); margin-top:10px; }
+  .row{ display:flex; gap:16px; }
+  .row > div{ flex:1; }
+  ul#list{ list-style:none; margin-top:18px; }
+  ul#list li{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--line); font-size:.85rem; }
+  ul#list li .info b{ font-family:'Fraunces',serif; font-weight:400; }
+  ul#list li .info span{ display:block; color:var(--paper-dim); font-size:.78rem; margin-top:2px; }
+</style>
+</head>
+<body>
+
+<h1>Manage photos</h1>
+<p class="sub">Private page — not linked anywhere on the public site. Add a photo, tag it with the place, and it appears on the site grouped by that place.</p>
+
+<div class="card">
+  <h2 style="margin:0 0 4px;padding:0;border:none;">1. Connect once</h2>
+  <p class="note">Needs a GitHub token so this page can commit files to your repo. Create one at github.com → Settings → Developer settings → Fine-grained tokens → scope it to just this repository with "Contents: Read and write" permission. It's saved only in this browser, never uploaded anywhere.</p>
+  <label>GitHub username / org</label>
+  <input type="text" id="owner" placeholder="e.g. nafisfuadshuvo">
+  <div class="row">
+    <div><label>Repository name</label><input type="text" id="repo" placeholder="e.g. portfolio"></div>
+    <div><label>Branch</label><input type="text" id="branch" placeholder="main" value="main"></div>
+  </div>
+  <label>Personal access token</label>
+  <input type="password" id="token" placeholder="ghp_...">
+  <button class="secondary" id="saveSettings">Save connection</button>
+  <div class="msg" id="settingsMsg"></div>
+</div>
+
+<h2>2. Add a photo</h2>
+<div class="card">
+  <label>Place</label>
+  <input type="text" id="place" placeholder="e.g. Hallstatt">
+  <div class="row">
+    <div><label>Date taken</label><input type="date" id="date"></div>
+    <div><label>Region (optional)</label><input type="text" id="region" placeholder="e.g. Salzkammergut"></div>
+  </div>
+  <label>Story / caption</label>
+  <textarea id="story" placeholder="What was happening in this photo?"></textarea>
+  <label>Photo file</label>
+  <input type="file" id="file" accept="image/*">
+  <button id="uploadBtn">Add to site</button>
+  <div class="msg" id="uploadMsg"></div>
+</div>
+
+<h2>3. Existing photos</h2>
+<div class="card">
+  <button class="secondary" id="refreshBtn">Refresh list</button>
+  <ul id="list"></ul>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function getSettings(){
+  return {
+    owner: localStorage.getItem('gh_owner') || '',
+    repo: localStorage.getItem('gh_repo') || '',
+    branch: localStorage.getItem('gh_branch') || 'main',
+    token: localStorage.getItem('gh_token') || ''
+  };
+}
+function fillSettings(){
+  const s = getSettings();
+  $('owner').value = s.owner; $('repo').value = s.repo; $('branch').value = s.branch; $('token').value = s.token;
+}
+fillSettings();
+
+$('saveSettings').addEventListener('click', () => {
+  localStorage.setItem('gh_owner', $('owner').value.trim());
+  localStorage.setItem('gh_repo', $('repo').value.trim());
+  localStorage.setItem('gh_branch', ($('branch').value.trim() || 'main'));
+  localStorage.setItem('gh_token', $('token').value.trim());
+  showMsg('settingsMsg', 'ok', 'Saved. You can now add photos.');
+});
+
+function showMsg(id, type, text){
+  const el = $(id);
+  el.className = 'msg ' + type;
+  el.textContent = text;
+}
+
+function api(path){
+  const s = getSettings();
+  return `https://api.github.com/repos/${s.owner}/${s.repo}/contents/${path}`;
+}
+function authHeaders(){
+  const s = getSettings();
+  return { 'Authorization': 'Bearer ' + s.token, 'Accept': 'application/vnd.github+json' };
+}
+
+async function getFile(path){
+  const s = getSettings();
+  const res = await fetch(api(path) + `?ref=${s.branch}`, { headers: authHeaders() });
+  if(res.status === 404) return null;
+  if(!res.ok) throw new Error(`GitHub error reading ${path}: ${res.status}`);
+  return res.json(); // { content (base64), sha, ... }
+}
+
+async function putFile(path, base64Content, message, sha){
+  const s = getSettings();
+  const body = { message, content: base64Content, branch: s.branch };
+  if(sha) body.sha = sha;
+  const res = await fetch(api(path), { method:'PUT', headers: { ...authHeaders(), 'Content-Type':'application/json' }, body: JSON.stringify(body) });
+  if(!res.ok){ const t = await res.text(); throw new Error(`GitHub error writing ${path}: ${res.status} ${t}`); }
+  return res.json();
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result.split(',')[1]);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+function b64EncodeUnicode(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function b64DecodeUnicode(str){
+  return decodeURIComponent(escape(atob(str)));
+}
+
+async function loadPhotosJson(){
+  const existing = await getFile('data/photos.json');
+  if(!existing) return { list: [], sha: null };
+  const text = b64DecodeUnicode(existing.content.replace(/\n/g,''));
+  let list = [];
+  try{ list = JSON.parse(text); }catch(e){ list = []; }
+  return { list, sha: existing.sha };
+}
+
+$('uploadBtn').addEventListener('click', async () => {
+  const s = getSettings();
+  if(!s.owner || !s.repo || !s.token){ showMsg('uploadMsg','err','Connect your repo and token first (step 1).'); return; }
+  const place = $('place').value.trim();
+  const file = $('file').files[0];
+  if(!place || !file){ showMsg('uploadMsg','err','Place and photo file are required.'); return; }
+
+  $('uploadBtn').disabled = true;
+  showMsg('uploadMsg','ok','Uploading…');
+
+  try{
+    const ext = file.name.split('.').pop().toLowerCase();
+    const safeName = (place.toLowerCase().replace(/[^a-z0-9]+/g,'-')) + '-' + Date.now() + '.' + ext;
+    const imagePath = `assets/photos/${safeName}`;
+
+    const base64 = await fileToBase64(file);
+    await putFile(imagePath, base64, `Add photo: ${place}`);
+
+    const { list, sha } = await loadPhotosJson();
+    list.push({
+      id: 'p' + Date.now(),
+      place,
+      region: $('region').value.trim(),
+      date: $('date').value,
+      story: $('story').value.trim(),
+      image: imagePath
+    });
+    const encoded = b64EncodeUnicode(JSON.stringify(list, null, 2));
+    await putFile('data/photos.json', encoded, `Add entry: ${place}`, sha);
+
+    showMsg('uploadMsg','ok','Added. It will appear on the site in a minute or two once GitHub Pages rebuilds.');
+    $('place').value=''; $('region').value=''; $('date').value=''; $('story').value=''; $('file').value='';
+    refreshList();
+  }catch(e){
+    showMsg('uploadMsg','err', e.message);
+  }finally{
+    $('uploadBtn').disabled = false;
+  }
+});
+
+async function refreshList(){
+  const s = getSettings();
+  if(!s.owner || !s.repo || !s.token){ return; }
+  try{
+    const { list } = await loadPhotosJson();
+    const ul = $('list');
+    ul.innerHTML = '';
+    if(!list.length){ ul.innerHTML = '<li>No photos yet.</li>'; return; }
+    list.slice().reverse().forEach(p => {
+      const li = document.createElement('li');
+      li.innerHTML = `<div class="info"><b>${p.place}</b><span>${p.date || 'no date'}${p.region ? ' · ' + p.region : ''}</span></div><button class="danger" data-id="${p.id}">Delete</button>`;
+      li.querySelector('button').addEventListener('click', () => deleteEntry(p.id));
+      ul.appendChild(li);
+    });
+  }catch(e){
+    showMsg('uploadMsg','err', e.message);
+  }
+}
+
+async function deleteEntry(id){
+  if(!confirm('Remove this photo entry from the site? (The image file stays in the repo.)')) return;
+  try{
+    const { list, sha } = await loadPhotosJson();
+    const updated = list.filter(p => p.id !== id);
+    const encoded = b64EncodeUnicode(JSON.stringify(updated, null, 2));
+    await putFile('data/photos.json', encoded, `Remove entry ${id}`, sha);
+    refreshList();
+  }catch(e){
+    showMsg('uploadMsg','err', e.message);
+  }
+}
+
+$('refreshBtn').addEventListener('click', refreshList);
+refreshList();
+</script>
+</body>
+</html>
