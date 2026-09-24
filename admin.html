@@ -77,7 +77,32 @@
   <div class="msg" id="uploadMsg"></div>
 </div>
 
-<h2>3. Existing photos</h2>
+<h2>3. Edit page text</h2>
+<div class="card">
+  <p class="note">Change the hero heading, about section, skills, and contact links shown on the main site.</p>
+  <label>Hero title</label>
+  <input type="text" id="heroTitle">
+  <label>Hero subtitle</label>
+  <textarea id="heroSub"></textarea>
+  <label>About — paragraph 1</label>
+  <textarea id="aboutP1"></textarea>
+  <label>About — paragraph 2</label>
+  <textarea id="aboutP2"></textarea>
+  <label>About — paragraph 3</label>
+  <textarea id="aboutP3"></textarea>
+  <label>Skills / tags (comma separated)</label>
+  <input type="text" id="skills" placeholder="Street Photography, Architecture, Travel, Austria">
+  <div class="row">
+    <div><label>Email</label><input type="text" id="ctEmail"></div>
+    <div><label>Instagram handle</label><input type="text" id="ctInstagram" placeholder="al_nafis_fuad_shuvo"></div>
+  </div>
+  <label>LinkedIn handle</label>
+  <input type="text" id="ctLinkedin" placeholder="nafisfuadshuvo">
+  <button id="saveSiteBtn">Save page text</button>
+  <div class="msg" id="siteMsg"></div>
+</div>
+
+<h2>4. Existing photos</h2>
 <div class="card">
   <button class="secondary" id="refreshBtn">Refresh list</button>
   <ul id="list"></ul>
@@ -149,6 +174,34 @@ function fileToBase64(file){
   });
 }
 
+// Keeps photos looking full-resolution on screen while capping the file at a sane
+// size (long edge ~2600px, high quality JPEG). This is NOT a download-blocker —
+// a public repo's files are always fetchable by URL if someone really wants them —
+// but it means what's publicly reachable is a strong display copy, not your raw
+// camera master file. Keep your originals backed up privately elsewhere.
+function resizeImage(file, maxDim = 2600, quality = 0.9){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      let { width, height } = img;
+      if(width > maxDim || height > maxDim){
+        const scale = maxDim / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      URL.revokeObjectURL(url);
+      const dataUrl = canvas.toDataURL('image/jpeg', quality);
+      resolve(dataUrl.split(',')[1]);
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
 function b64EncodeUnicode(str){
   return btoa(unescape(encodeURIComponent(str)));
 }
@@ -176,11 +229,10 @@ $('uploadBtn').addEventListener('click', async () => {
   showMsg('uploadMsg','ok','Uploading…');
 
   try{
-    const ext = file.name.split('.').pop().toLowerCase();
-    const safeName = (place.toLowerCase().replace(/[^a-z0-9]+/g,'-')) + '-' + Date.now() + '.' + ext;
+    const safeName = (place.toLowerCase().replace(/[^a-z0-9]+/g,'-')) + '-' + Date.now() + '.jpg';
     const imagePath = `assets/photos/${safeName}`;
 
-    const base64 = await fileToBase64(file);
+    const base64 = await resizeImage(file);
     await putFile(imagePath, base64, `Add photo: ${place}`);
 
     const { list, sha } = await loadPhotosJson();
@@ -237,8 +289,63 @@ async function deleteEntry(id){
   }
 }
 
+async function loadSiteJson(){
+  const existing = await getFile('data/site.json');
+  if(!existing) return { data: {}, sha: null };
+  const text = b64DecodeUnicode(existing.content.replace(/\n/g,''));
+  let data = {};
+  try{ data = JSON.parse(text); }catch(e){ data = {}; }
+  return { data, sha: existing.sha };
+}
+
+async function prefillSiteForm(){
+  const s = getSettings();
+  if(!s.owner || !s.repo || !s.token) return;
+  try{
+    const { data } = await loadSiteJson();
+    if(data.heroTitle) $('heroTitle').value = data.heroTitle;
+    if(data.heroSub) $('heroSub').value = data.heroSub;
+    if(data.aboutP1) $('aboutP1').value = data.aboutP1;
+    if(data.aboutP2) $('aboutP2').value = data.aboutP2;
+    if(data.aboutP3) $('aboutP3').value = data.aboutP3;
+    if(Array.isArray(data.skills)) $('skills').value = data.skills.join(', ');
+    if(data.email) $('ctEmail').value = data.email;
+    if(data.instagramHandle) $('ctInstagram').value = data.instagramHandle;
+    if(data.linkedinHandle) $('ctLinkedin').value = data.linkedinHandle;
+  }catch(e){ /* no site.json yet — leave blank, form falls back to site defaults */ }
+}
+
+$('saveSiteBtn').addEventListener('click', async () => {
+  const s = getSettings();
+  if(!s.owner || !s.repo || !s.token){ showMsg('siteMsg','err','Connect your repo and token first (step 1).'); return; }
+  $('saveSiteBtn').disabled = true;
+  showMsg('siteMsg','ok','Saving…');
+  try{
+    const { sha } = await loadSiteJson();
+    const payload = {
+      heroTitle: $('heroTitle').value.trim(),
+      heroSub: $('heroSub').value.trim(),
+      aboutP1: $('aboutP1').value.trim(),
+      aboutP2: $('aboutP2').value.trim(),
+      aboutP3: $('aboutP3').value.trim(),
+      skills: $('skills').value.split(',').map(x => x.trim()).filter(Boolean),
+      email: $('ctEmail').value.trim(),
+      instagramHandle: $('ctInstagram').value.trim(),
+      linkedinHandle: $('ctLinkedin').value.trim()
+    };
+    const encoded = b64EncodeUnicode(JSON.stringify(payload, null, 2));
+    await putFile('data/site.json', encoded, 'Update page text', sha);
+    showMsg('siteMsg','ok','Saved. Give it a minute, then refresh the main site.');
+  }catch(e){
+    showMsg('siteMsg','err', e.message);
+  }finally{
+    $('saveSiteBtn').disabled = false;
+  }
+});
+
 $('refreshBtn').addEventListener('click', refreshList);
 refreshList();
+prefillSiteForm();
 </script>
 </body>
 </html>

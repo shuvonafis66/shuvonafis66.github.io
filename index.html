@@ -121,8 +121,8 @@
   <div class="hero-bg"></div>
   <div class="hero-content">
     <div class="hero-eyebrow"><span class="dot"></span> Photographer, Vienna</div>
-    <h1>Frames that hold a little longer than a glance.</h1>
-    <p class="hero-sub">Originally from Bangladesh, now studying and shooting in Vienna — I make images out of streets, architecture, and the corners of Austria I find while I'm out there.</p>
+    <h1 id="heroTitle">Frames that hold a little longer than a glance.</h1>
+    <p class="hero-sub" id="heroSub">Originally from Bangladesh, now studying and shooting in Vienna — I make images out of streets, architecture, and the corners of Austria I find while I'm out there.</p>
     <div class="hero-meta">
       <div><strong>Vienna</strong>based &amp; shooting</div>
       <div><strong>WU Wien</strong>MSc Digital Economy</div>
@@ -148,10 +148,10 @@
       <div style="font-size:.75rem;">Add your portrait via the admin page</div>
     </div>
     <div class="about-text">
-      <p>I'm Al Nafis Fuad Shuvo, an international student from Bangladesh, currently based in Vienna, Austria.</p>
-      <p>I'm pursuing an MSc in Digital Economy at WU Wien. Photography is what I do between lectures, commutes, and trips around the country — street scenes, architecture, and the quiet corners of Austria I keep finding as I travel.</p>
-      <p>Every photo below is tied to the place I took it — this page grows as I go.</p>
-      <div class="skills">
+      <p id="aboutP1">I'm Al Nafis Fuad Shuvo, an international student from Bangladesh, currently based in Vienna, Austria.</p>
+      <p id="aboutP2">I'm pursuing an MSc in Digital Economy at WU Wien. Photography is what I do between lectures, commutes, and trips around the country — street scenes, architecture, and the quiet corners of Austria I keep finding as I travel.</p>
+      <p id="aboutP3">Every photo below is tied to the place I took it — this page grows as I go.</p>
+      <div class="skills" id="skillsList">
         <span>Street Photography</span>
         <span>Architecture</span>
         <span>Travel</span>
@@ -164,9 +164,9 @@
 <section id="contact">
   <h2>Let's make an image worth keeping.</h2>
   <div class="contact-row">
-    <div class="contact-col"><span>Email</span><a href="mailto:shuvonafis66@gmail.com">shuvonafis66@gmail.com</a></div>
-    <div class="contact-col"><span>Instagram</span><a href="https://instagram.com/al_nafis_fuad_shuvo" target="_blank" rel="noopener">@al_nafis_fuad_shuvo</a></div>
-    <div class="contact-col"><span>LinkedIn</span><a href="https://linkedin.com/in/nafisfuadshuvo" target="_blank" rel="noopener">nafisfuadshuvo</a></div>
+    <div class="contact-col"><span>Email</span><a id="contactEmail" href="mailto:shuvonafis66@gmail.com">shuvonafis66@gmail.com</a></div>
+    <div class="contact-col"><span>Instagram</span><a id="contactInstagram" href="https://instagram.com/al_nafis_fuad_shuvo" target="_blank" rel="noopener">@al_nafis_fuad_shuvo</a></div>
+    <div class="contact-col"><span>LinkedIn</span><a id="contactLinkedin" href="https://linkedin.com/in/nafisfuadshuvo" target="_blank" rel="noopener">nafisfuadshuvo</a></div>
   </div>
 </section>
 
@@ -196,6 +196,28 @@ document.getElementById('year').textContent = new Date().getFullYear();
 // nothing on the open web can fully stop a determined download, e.g. screenshots)
 document.addEventListener('contextmenu', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });
 document.addEventListener('dragstart', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });
+
+async function loadSiteContent(){
+  try{
+    const res = await fetch('data/site.json', { cache:'no-store' });
+    if(!res.ok) return;
+    const s = await res.json();
+    if(s.heroTitle) document.getElementById('heroTitle').textContent = s.heroTitle;
+    if(s.heroSub) document.getElementById('heroSub').textContent = s.heroSub;
+    if(s.aboutP1) document.getElementById('aboutP1').textContent = s.aboutP1;
+    if(s.aboutP2) document.getElementById('aboutP2').textContent = s.aboutP2;
+    if(s.aboutP3) document.getElementById('aboutP3').textContent = s.aboutP3;
+    if(Array.isArray(s.skills) && s.skills.length){
+      const box = document.getElementById('skillsList');
+      box.innerHTML = '';
+      s.skills.forEach(sk => { const span = document.createElement('span'); span.textContent = sk; box.appendChild(span); });
+    }
+    if(s.email){ document.getElementById('contactEmail').textContent = s.email; document.getElementById('contactEmail').href = 'mailto:' + s.email; }
+    if(s.instagramHandle){ document.getElementById('contactInstagram').textContent = '@' + s.instagramHandle.replace(/^@/,''); document.getElementById('contactInstagram').href = 'https://instagram.com/' + s.instagramHandle.replace(/^@/,''); }
+    if(s.linkedinHandle){ document.getElementById('contactLinkedin').textContent = s.linkedinHandle; document.getElementById('contactLinkedin').href = 'https://linkedin.com/in/' + s.linkedinHandle; }
+  }catch(e){ /* keep defaults already in the HTML */ }
+}
+loadSiteContent();
 
 let photos = [];
 let currentIndex = 0;
