@@ -4,108 +4,187 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Manage photos — private</title>
+<title>Al Nafis Fuad Shuvo — Photography (edit mode)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root{ --bg:#0f0f0e; --bg-raised:#171716; --line:#2a2a28; --paper:#eee9df; --paper-dim:#9c968a; --clay:#b98a5a; --ok:#7fae7f; --err:#c97a6a; }
+  :root{ --bg:#0f0f0e; --bg-raised:#171716; --line:#2a2a28; --paper:#eee9df; --paper-dim:#9c968a; --clay:#b98a5a; --focus:#d7b98a; --ok:#7fae7f; --err:#c97a6a; }
   *{ margin:0; padding:0; box-sizing:border-box; }
-  body{ background:var(--bg); color:var(--paper); font-family:'Work Sans',sans-serif; font-weight:300; line-height:1.6; padding:6vh 6vw 10vh; max-width:760px; margin:0 auto; }
-  h1{ font-family:'Fraunces',serif; font-weight:400; font-size:2rem; margin-bottom:6px; }
-  .sub{ color:var(--paper-dim); font-size:.9rem; margin-bottom:5vh; }
-  h2{ font-family:'Fraunces',serif; font-weight:400; font-size:1.2rem; margin:5vh 0 18px; border-top:1px solid var(--line); padding-top:5vh; }
-  .card{ background:var(--bg-raised); border:1px solid var(--line); padding:28px; }
-  label{ display:block; font-size:.8rem; color:var(--paper-dim); margin-bottom:6px; margin-top:18px; }
-  label:first-child{ margin-top:0; }
-  input[type=text], input[type=password], input[type=date], textarea{
-    width:100%; background:var(--bg); border:1px solid var(--line); color:var(--paper);
-    padding:12px 14px; font-family:'Work Sans',sans-serif; font-size:.95rem; border-radius:2px;
-  }
-  input:focus, textarea:focus{ outline:none; border-color:var(--clay); }
-  textarea{ resize:vertical; min-height:70px; }
-  input[type=file]{ width:100%; color:var(--paper-dim); font-size:.85rem; margin-top:2px; }
-  button{ margin-top:26px; background:var(--clay); color:#0f0f0e; border:none; padding:13px 26px; font-size:.9rem; font-weight:500; cursor:pointer; border-radius:2px; }
-  button:hover{ opacity:.9; }
-  button.secondary{ background:none; border:1px solid var(--line); color:var(--paper-dim); }
-  button.danger{ background:none; border:1px solid var(--err); color:var(--err); padding:6px 12px; font-size:.75rem; margin-top:0; }
-  .msg{ margin-top:16px; font-size:.85rem; display:none; padding:10px 14px; border-radius:2px; }
-  .msg.ok{ display:block; background:rgba(127,174,127,.12); color:var(--ok); }
-  .msg.err{ display:block; background:rgba(201,122,106,.12); color:var(--err); }
-  .note{ font-size:.8rem; color:var(--paper-dim); margin-top:10px; }
-  .row{ display:flex; gap:16px; }
-  .row > div{ flex:1; }
-  ul#list{ list-style:none; margin-top:18px; }
-  ul#list li{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--line); font-size:.85rem; }
-  ul#list li .info b{ font-family:'Fraunces',serif; font-weight:400; }
-  ul#list li .info span{ display:block; color:var(--paper-dim); font-size:.78rem; margin-top:2px; }
+  body{ background:var(--bg); color:var(--paper); font-family:'Work Sans',sans-serif; font-weight:300; line-height:1.6; overflow-x:hidden; }
+  a{ color:inherit; }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:400; letter-spacing:-0.01em; }
+
+  #lockScreen{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:6vw; }
+  .lock-card{ max-width:420px; width:100%; background:var(--bg-raised); border:1px solid var(--line); padding:36px; }
+  .lock-card h1{ font-size:1.5rem; margin-bottom:6px; }
+  .lock-card p{ color:var(--paper-dim); font-size:.85rem; margin-bottom:26px; }
+  .lock-card label{ display:block; font-size:.78rem; color:var(--paper-dim); margin:14px 0 6px; }
+  .lock-card label:first-of-type{ margin-top:0; }
+  .lock-card input{ width:100%; background:var(--bg); border:1px solid var(--line); color:var(--paper); padding:11px 13px; font-family:'Work Sans',sans-serif; font-size:.9rem; border-radius:2px; }
+  .lock-card input:focus{ outline:none; border-color:var(--clay); }
+  .lock-card button{ margin-top:22px; width:100%; background:var(--clay); color:#0f0f0e; border:none; padding:12px; font-size:.9rem; font-weight:500; cursor:pointer; border-radius:2px; }
+  .lock-msg{ margin-top:14px; font-size:.8rem; display:none; }
+  .lock-msg.err{ display:block; color:var(--err); }
+
+  #appRoot{ display:none; padding-bottom:110px; }
+  [contenteditable="true"]{ outline: 1px dashed transparent; border-radius:2px; transition:outline-color .15s; cursor:text; }
+  [contenteditable="true"]:hover, [contenteditable="true"]:focus{ outline-color:var(--clay); outline:1px dashed var(--clay); }
+
+  nav{ position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:28px 6vw; mix-blend-mode:difference; }
+  .nav-name{ font-family:'Fraunces',serif; font-size:1.05rem; }
+  .edit-pill{ position:fixed; top:26px; right:6vw; z-index:110; background:var(--clay); color:#0f0f0e; font-size:.72rem; padding:6px 12px; border-radius:100px; font-weight:500; }
+
+  .hero{ min-height:80svh; display:flex; flex-direction:column; justify-content:flex-end; padding:0 6vw 8vh; position:relative; }
+  .hero-bg{ position:absolute; inset:0; background:radial-gradient(ellipse at 30% 20%,#23201c 0%,transparent 55%),linear-gradient(180deg,#100f0e 0%,#0a0a09 100%); }
+  .hero-content{ position:relative; z-index:2; }
+  .hero-eyebrow{ font-size:.85rem; color:var(--clay); margin-bottom:18px; display:flex; align-items:center; gap:14px; }
+  .hero-eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--clay); }
+  .hero h1{ font-size:clamp(2.4rem,7vw,5.5rem); line-height:.98; max-width:20ch; }
+  .hero-sub{ margin-top:24px; max-width:44ch; font-size:1.05rem; color:var(--paper-dim); }
+
+  section{ padding:9vh 6vw; }
+  .section-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:5vh; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:20px; }
+  .section-head h2{ font-size:clamp(1.7rem,3.4vw,2.4rem); }
+  .btn{ background:none; border:1px solid var(--line); color:var(--paper-dim); padding:9px 16px; border-radius:100px; font-size:.78rem; cursor:pointer; font-family:'Work Sans',sans-serif; white-space:nowrap; }
+  .btn:hover{ border-color:var(--clay); color:var(--clay); }
+  .btn.solid{ background:var(--clay); color:#0f0f0e; border:none; font-weight:500; }
+  .btn.danger{ border-color:var(--err); color:var(--err); }
+
+  .place-block{ margin-bottom:8vh; }
+  .place-title{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:2vh; }
+  .place-title h3{ font-size:clamp(1.3rem,2.6vw,1.8rem); }
+
+  .gallery{ columns:3 220px; column-gap:14px; }
+  .frame{ position:relative; background:var(--bg-raised); border:1px solid var(--line); overflow:hidden; break-inside:avoid; margin-bottom:14px; }
+  .frame img{ width:100%; height:auto; display:block; pointer-events:none; user-select:none; }
+  .frame .del{ position:absolute; top:8px; right:8px; background:rgba(15,15,14,.85); color:var(--err); border:1px solid var(--err); border-radius:100px; padding:5px 11px; font-size:.7rem; cursor:pointer; opacity:0; transition:opacity .2s; }
+  .frame:hover .del{ opacity:1; }
+  .frame .cap{ position:absolute; left:0; right:0; bottom:0; padding:12px 14px; background:linear-gradient(0deg,rgba(0,0,0,.8),transparent); font-size:.75rem; }
+
+  .add-frame{ break-inside:avoid; margin-bottom:14px; border:1px dashed var(--line); aspect-ratio:4/5; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--paper-dim); font-size:.85rem; text-align:center; padding:14px; }
+  .add-frame:hover{ border-color:var(--clay); color:var(--clay); }
+
+  .inline-form{ background:var(--bg-raised); border:1px solid var(--clay); padding:20px; margin-bottom:6vh; display:none; }
+  .inline-form.open{ display:block; }
+  .inline-form label{ display:block; font-size:.75rem; color:var(--paper-dim); margin:12px 0 5px; }
+  .inline-form label:first-child{ margin-top:0; }
+  .inline-form input[type=text], .inline-form input[type=date], .inline-form textarea{ width:100%; background:var(--bg); border:1px solid var(--line); color:var(--paper); padding:10px 12px; font-family:'Work Sans',sans-serif; font-size:.88rem; border-radius:2px; }
+  .inline-form textarea{ min-height:60px; }
+  .inline-form input[type=file]{ margin-top:4px; font-size:.82rem; color:var(--paper-dim); }
+  .inline-form .row{ display:flex; gap:14px; }
+  .inline-form .row>div{ flex:1; }
+  .inline-form .actions{ margin-top:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .inline-form .msg{ font-size:.78rem; }
+  .inline-form .msg.ok{ color:var(--ok); }
+  .inline-form .msg.err{ color:var(--err); }
+
+  .about{ max-width:70ch; }
+  .about-text p{ margin-bottom:1.2em; color:var(--paper-dim); max-width:60ch; }
+  .skills{ display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+  .skills span.tag{ border:1px solid var(--line); padding:7px 14px; border-radius:100px; font-size:.8rem; color:var(--paper-dim); display:inline-flex; align-items:center; gap:8px; }
+  .skills span.tag .rm{ cursor:pointer; color:var(--err); font-weight:600; }
+  .skills .add-skill{ border:1px dashed var(--line); padding:7px 14px; border-radius:100px; font-size:.8rem; cursor:pointer; }
+  .skills .add-skill:hover{ border-color:var(--clay); color:var(--clay); }
+
+  .contact-row{ display:flex; gap:50px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:26px; }
+  .contact-col span{ display:block; font-size:.75rem; color:var(--paper-dim); margin-bottom:8px; }
+  .contact-col a{ font-size:1rem; text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:2px; }
+
+  #editBar{ position:fixed; left:0; right:0; bottom:0; z-index:150; background:var(--bg-raised); border-top:1px solid var(--line); padding:16px 6vw; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+  #editBar .status{ font-size:.8rem; color:var(--paper-dim); }
+  #editBar .status.ok{ color:var(--ok); }
+  #editBar .status.err{ color:var(--err); }
+  #editBar .actions{ display:flex; gap:10px; }
 </style>
 </head>
 <body>
 
-<h1>Manage photos</h1>
-<p class="sub">Private page — not linked anywhere on the public site. Add a photo, tag it with the place, and it appears on the site grouped by that place.</p>
-
-<div class="card">
-  <h2 style="margin:0 0 4px;padding:0;border:none;">1. Connect once</h2>
-  <p class="note">Needs a GitHub token so this page can commit files to your repo. Create one at github.com → Settings → Developer settings → Fine-grained tokens → scope it to just this repository with "Contents: Read and write" permission. It's saved only in this browser, never uploaded anywhere.</p>
-  <label>GitHub username / org</label>
-  <input type="text" id="owner" placeholder="e.g. nafisfuadshuvo">
-  <div class="row">
-    <div><label>Repository name</label><input type="text" id="repo" placeholder="e.g. portfolio"></div>
-    <div><label>Branch</label><input type="text" id="branch" placeholder="main" value="main"></div>
+<div id="lockScreen">
+  <div class="lock-card">
+    <h1>Edit mode</h1>
+    <p>Enter your repo connection and access token once — saved only in this browser.</p>
+    <label>GitHub username / org</label>
+    <input type="text" id="lkOwner">
+    <label>Repository name</label>
+    <input type="text" id="lkRepo">
+    <label>Branch</label>
+    <input type="text" id="lkBranch" placeholder="main" value="main">
+    <label>Personal access token</label>
+    <input type="password" id="lkToken" placeholder="ghp_...">
+    <button id="unlockBtn">Unlock editing</button>
+    <div class="lock-msg" id="lockMsg"></div>
   </div>
-  <label>Personal access token</label>
-  <input type="password" id="token" placeholder="ghp_...">
-  <button class="secondary" id="saveSettings">Save connection</button>
-  <div class="msg" id="settingsMsg"></div>
 </div>
 
-<h2>2. Add a photo</h2>
-<div class="card">
-  <label>Place</label>
-  <input type="text" id="place" placeholder="e.g. Hallstatt">
-  <div class="row">
-    <div><label>Date taken</label><input type="date" id="date"></div>
-    <div><label>Region (optional)</label><input type="text" id="region" placeholder="e.g. Salzkammergut"></div>
-  </div>
-  <label>Story / caption</label>
-  <textarea id="story" placeholder="What was happening in this photo?"></textarea>
-  <label>Photo file</label>
-  <input type="file" id="file" accept="image/*">
-  <button id="uploadBtn">Add to site</button>
-  <div class="msg" id="uploadMsg"></div>
+<div id="appRoot">
+  <div class="edit-pill">✎ Edit mode</div>
+  <nav>
+    <div class="nav-name">Al Nafis Fuad Shuvo</div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow"><span class="dot"></span> Photographer, Vienna</div>
+      <h1 id="heroTitle" contenteditable="true"></h1>
+      <p class="hero-sub" id="heroSub" contenteditable="true"></p>
+    </div>
+  </header>
+
+  <section id="work">
+    <div class="section-head">
+      <h2>Selected work</h2>
+      <button class="btn solid" id="addPlaceBtn">+ Add a new place</button>
+    </div>
+    <div id="newPlaceForm" class="inline-form">
+      <label>Place name</label>
+      <input type="text" id="npPlace" placeholder="e.g. Salzburg">
+      <div class="row">
+        <div><label>Date taken</label><input type="date" id="npDate"></div>
+        <div><label>Region (optional)</label><input type="text" id="npRegion"></div>
+      </div>
+      <label>Story / caption</label>
+      <textarea id="npStory"></textarea>
+      <label>Photo file</label>
+      <input type="file" id="npFile" accept="image/*">
+      <div class="actions">
+        <button class="btn solid" id="npSubmit">Add photo</button>
+        <button class="btn" id="npCancel">Cancel</button>
+        <span class="msg" id="npMsg"></span>
+      </div>
+    </div>
+    <div id="gallery-root"></div>
+  </section>
+
+  <section id="about">
+    <div class="section-head"><h2>About</h2></div>
+    <div class="about">
+      <div class="about-text">
+        <p id="aboutP1" contenteditable="true"></p>
+        <p id="aboutP2" contenteditable="true"></p>
+        <p id="aboutP3" contenteditable="true"></p>
+        <div class="skills" id="skillsList"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Let's make an image worth keeping.</h2>
+    <div class="contact-row">
+      <div class="contact-col"><span>Email</span><a id="ctEmail" contenteditable="true"></a></div>
+      <div class="contact-col"><span>Instagram</span><a id="ctInstagram" contenteditable="true"></a></div>
+      <div class="contact-col"><span>LinkedIn</span><a id="ctLinkedin" contenteditable="true"></a></div>
+    </div>
+  </section>
 </div>
 
-<h2>3. Edit page text</h2>
-<div class="card">
-  <p class="note">Change the hero heading, about section, skills, and contact links shown on the main site.</p>
-  <label>Hero title</label>
-  <input type="text" id="heroTitle">
-  <label>Hero subtitle</label>
-  <textarea id="heroSub"></textarea>
-  <label>About — paragraph 1</label>
-  <textarea id="aboutP1"></textarea>
-  <label>About — paragraph 2</label>
-  <textarea id="aboutP2"></textarea>
-  <label>About — paragraph 3</label>
-  <textarea id="aboutP3"></textarea>
-  <label>Skills / tags (comma separated)</label>
-  <input type="text" id="skills" placeholder="Street Photography, Architecture, Travel, Austria">
-  <div class="row">
-    <div><label>Email</label><input type="text" id="ctEmail"></div>
-    <div><label>Instagram handle</label><input type="text" id="ctInstagram" placeholder="al_nafis_fuad_shuvo"></div>
+<div id="editBar" style="display:none;">
+  <span class="status" id="editStatus">Text edits save when you press "Save text" — photo add/delete saves instantly.</span>
+  <div class="actions">
+    <button class="btn danger" id="disconnectBtn">Disconnect</button>
+    <button class="btn solid" id="saveSiteBtn">Save text</button>
   </div>
-  <label>LinkedIn handle</label>
-  <input type="text" id="ctLinkedin" placeholder="nafisfuadshuvo">
-  <button id="saveSiteBtn">Save page text</button>
-  <div class="msg" id="siteMsg"></div>
-</div>
-
-<h2>4. Existing photos</h2>
-<div class="card">
-  <button class="secondary" id="refreshBtn">Refresh list</button>
-  <ul id="list"></ul>
 </div>
 
 <script>
@@ -119,67 +198,73 @@ function getSettings(){
     token: localStorage.getItem('gh_token') || ''
   };
 }
-function fillSettings(){
-  const s = getSettings();
-  $('owner').value = s.owner; $('repo').value = s.repo; $('branch').value = s.branch; $('token').value = s.token;
-}
-fillSettings();
 
-$('saveSettings').addEventListener('click', () => {
-  localStorage.setItem('gh_owner', $('owner').value.trim());
-  localStorage.setItem('gh_repo', $('repo').value.trim());
-  localStorage.setItem('gh_branch', ($('branch').value.trim() || 'main'));
-  localStorage.setItem('gh_token', $('token').value.trim());
-  showMsg('settingsMsg', 'ok', 'Saved. You can now add photos.');
+$('lkOwner').value = getSettings().owner;
+$('lkRepo').value = getSettings().repo;
+$('lkBranch').value = getSettings().branch || 'main';
+$('lkToken').value = getSettings().token;
+
+$('unlockBtn').addEventListener('click', () => {
+  const owner = $('lkOwner').value.trim();
+  const repo = $('lkRepo').value.trim();
+  const branch = $('lkBranch').value.trim() || 'main';
+  const token = $('lkToken').value.trim();
+  if(!owner || !repo || !token){
+    $('lockMsg').className = 'lock-msg err';
+    $('lockMsg').textContent = 'Fill in owner, repository and token.';
+    return;
+  }
+  localStorage.setItem('gh_owner', owner);
+  localStorage.setItem('gh_repo', repo);
+  localStorage.setItem('gh_branch', branch);
+  localStorage.setItem('gh_token', token);
+  $('lockScreen').style.display = 'none';
+  $('appRoot').style.display = 'block';
+  $('editBar').style.display = 'flex';
+  boot();
 });
 
-function showMsg(id, type, text){
-  const el = $(id);
-  el.className = 'msg ' + type;
-  el.textContent = text;
-}
+$('disconnectBtn').addEventListener('click', () => {
+  if(!confirm('Remove the saved token from this browser?')) return;
+  ['gh_owner','gh_repo','gh_branch','gh_token'].forEach(k => localStorage.removeItem(k));
+  location.reload();
+});
 
-function api(path){
-  const s = getSettings();
-  return `https://api.github.com/repos/${s.owner}/${s.repo}/contents/${path}`;
-}
-function authHeaders(){
-  const s = getSettings();
-  return { 'Authorization': 'Bearer ' + s.token, 'Accept': 'application/vnd.github+json' };
-}
+function api(path){ const s = getSettings(); return `https://api.github.com/repos/${s.owner}/${s.repo}/contents/${path}`; }
+function authHeaders(){ const s = getSettings(); return { 'Authorization':'Bearer '+s.token, 'Accept':'application/vnd.github+json' }; }
 
 async function getFile(path){
   const s = getSettings();
-  const res = await fetch(api(path) + `?ref=${s.branch}`, { headers: authHeaders() });
+  const res = await fetch(api(path)+`?ref=${s.branch}`, { headers: authHeaders() });
   if(res.status === 404) return null;
-  if(!res.ok) throw new Error(`GitHub error reading ${path}: ${res.status}`);
-  return res.json(); // { content (base64), sha, ... }
+  if(!res.ok) throw new Error(`GitHub read error (${path}): ${res.status}`);
+  return res.json();
 }
-
 async function putFile(path, base64Content, message, sha){
   const s = getSettings();
   const body = { message, content: base64Content, branch: s.branch };
   if(sha) body.sha = sha;
-  const res = await fetch(api(path), { method:'PUT', headers: { ...authHeaders(), 'Content-Type':'application/json' }, body: JSON.stringify(body) });
-  if(!res.ok){ const t = await res.text(); throw new Error(`GitHub error writing ${path}: ${res.status} ${t}`); }
+  const res = await fetch(api(path), { method:'PUT', headers:{...authHeaders(),'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  if(!res.ok){ const t = await res.text(); throw new Error(`GitHub write error (${path}): ${res.status} ${t}`); }
   return res.json();
 }
+function b64EncodeUnicode(str){ return btoa(unescape(encodeURIComponent(str))); }
+function b64DecodeUnicode(str){ return decodeURIComponent(escape(atob(str))); }
 
-function fileToBase64(file){
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(r.result.split(',')[1]);
-    r.onerror = reject;
-    r.readAsDataURL(file);
-  });
+async function loadJsonFile(path, fallback){
+  const existing = await getFile(path);
+  if(!existing) return { data: fallback, sha: null };
+  const text = b64DecodeUnicode(existing.content.replace(/\n/g,''));
+  let data = fallback;
+  try{ data = JSON.parse(text); }catch(e){}
+  return { data, sha: existing.sha };
 }
 
-// Keeps photos looking full-resolution on screen while capping the file at a sane
-// size (long edge ~2600px, high quality JPEG). This is NOT a download-blocker —
-// a public repo's files are always fetchable by URL if someone really wants them —
-// but it means what's publicly reachable is a strong display copy, not your raw
-// camera master file. Keep your originals backed up privately elsewhere.
-function resizeImage(file, maxDim = 2600, quality = 0.9){
+// Keeps photos looking sharp on any screen while capping the master file size.
+// NOTE: since the repo is public, a determined visitor can still find an image's
+// direct URL via view-source or the browser's network tab — this is not true DRM,
+// just a strong display copy that isn't your raw camera original.
+function resizeImage(file, maxDim = 3200, quality = 0.92){
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
@@ -187,165 +272,197 @@ function resizeImage(file, maxDim = 2600, quality = 0.9){
       let { width, height } = img;
       if(width > maxDim || height > maxDim){
         const scale = maxDim / Math.max(width, height);
-        width = Math.round(width * scale);
-        height = Math.round(height * scale);
+        width = Math.round(width*scale); height = Math.round(height*scale);
       }
       const canvas = document.createElement('canvas');
       canvas.width = width; canvas.height = height;
       canvas.getContext('2d').drawImage(img, 0, 0, width, height);
       URL.revokeObjectURL(url);
-      const dataUrl = canvas.toDataURL('image/jpeg', quality);
-      resolve(dataUrl.split(',')[1]);
+      resolve(canvas.toDataURL('image/jpeg', quality).split(',')[1]);
     };
     img.onerror = reject;
     img.src = url;
   });
 }
 
-function b64EncodeUnicode(str){
-  return btoa(unescape(encodeURIComponent(str)));
+function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+
+let photos = [];
+let siteData = {};
+let currentSkills = [];
+
+async function boot(){
+  const site = await loadJsonFile('data/site.json', {});
+  siteData = site.data;
+  const ph = await loadJsonFile('data/photos.json', []);
+  photos = Array.isArray(ph.data) ? ph.data : [];
+  fillForm();
+  renderGallery();
 }
-function b64DecodeUnicode(str){
-  return decodeURIComponent(escape(atob(str)));
+
+function fillForm(){
+  $('heroTitle').textContent = siteData.heroTitle || "Frames that hold a little longer than a glance.";
+  $('heroSub').textContent = siteData.heroSub || "Originally from Bangladesh, now studying and shooting in Vienna — I make images out of streets, architecture, and the corners of Austria I find while I'm out there.";
+  $('aboutP1').textContent = siteData.aboutP1 || "I'm Al Nafis Fuad Shuvo, an international student from Bangladesh, currently based in Vienna, Austria.";
+  $('aboutP2').textContent = siteData.aboutP2 || "I'm pursuing an MSc in Digital Economy at WU Wien. Photography is what I do between lectures, commutes, and trips around the country.";
+  $('aboutP3').textContent = siteData.aboutP3 || "Every photo below is tied to the place I took it — this page grows as I go.";
+  $('ctEmail').textContent = siteData.email || "shuvonafis66@gmail.com";
+  $('ctInstagram').textContent = siteData.instagramHandle ? '@'+siteData.instagramHandle.replace(/^@/,'') : "@al_nafis_fuad_shuvo";
+  $('ctLinkedin').textContent = siteData.linkedinHandle || "nafisfuadshuvo";
+
+  const skills = Array.isArray(siteData.skills) && siteData.skills.length ? siteData.skills : ["Street Photography","Architecture","Travel","Austria"];
+  renderSkills(skills);
 }
 
-async function loadPhotosJson(){
-  const existing = await getFile('data/photos.json');
-  if(!existing) return { list: [], sha: null };
-  const text = b64DecodeUnicode(existing.content.replace(/\n/g,''));
-  let list = [];
-  try{ list = JSON.parse(text); }catch(e){ list = []; }
-  return { list, sha: existing.sha };
+function renderSkills(list){
+  currentSkills = list.slice();
+  const box = $('skillsList');
+  box.innerHTML = '';
+  currentSkills.forEach((sk, i) => {
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.innerHTML = `${sk} <span class="rm" data-i="${i}">✕</span>`;
+    span.querySelector('.rm').addEventListener('click', () => { currentSkills.splice(i,1); renderSkills(currentSkills); });
+    box.appendChild(span);
+  });
+  const add = document.createElement('span');
+  add.className = 'add-skill';
+  add.textContent = '+ tag';
+  add.addEventListener('click', () => {
+    const val = prompt('New tag:');
+    if(val && val.trim()) { currentSkills.push(val.trim()); renderSkills(currentSkills); }
+  });
+  box.appendChild(add);
 }
 
-$('uploadBtn').addEventListener('click', async () => {
-  const s = getSettings();
-  if(!s.owner || !s.repo || !s.token){ showMsg('uploadMsg','err','Connect your repo and token first (step 1).'); return; }
-  const place = $('place').value.trim();
-  const file = $('file').files[0];
-  if(!place || !file){ showMsg('uploadMsg','err','Place and photo file are required.'); return; }
+function groupByPlace(list){
+  const groups = {}, order = [];
+  list.forEach(p => { if(!groups[p.place]){ groups[p.place]=[]; order.push(p.place); } groups[p.place].push(p); });
+  return order.map(place => ({ place, items: groups[place] }));
+}
 
-  $('uploadBtn').disabled = true;
-  showMsg('uploadMsg','ok','Uploading…');
+function renderGallery(){
+  const root = $('gallery-root');
+  root.innerHTML = '';
+  if(!photos.length){
+    root.innerHTML = '<p style="color:var(--paper-dim);">No photos yet — use "+ Add a new place" above.</p>';
+    return;
+  }
+  groupByPlace(photos).forEach(g => {
+    const block = document.createElement('div');
+    block.className = 'place-block';
+    block.innerHTML = `<div class="place-title"><h3>${g.place}</h3><span style="color:var(--paper-dim);font-size:.8rem;">${g.items.length} photo${g.items.length>1?'s':''}</span></div><div class="gallery"></div>`;
+    const gal = block.querySelector('.gallery');
+    g.items.forEach(p => {
+      const frame = document.createElement('div');
+      frame.className = 'frame';
+      frame.innerHTML = `<img src="${p.image}"><button class="del">Delete</button><div class="cap">${p.story ? p.story.slice(0,70) : ''}</div>`;
+      frame.querySelector('.del').addEventListener('click', () => deletePhoto(p.id));
+      gal.appendChild(frame);
+    });
+    const addTile = document.createElement('div');
+    addTile.className = 'add-frame';
+    addTile.textContent = '+ Add photo to ' + g.place;
+    addTile.addEventListener('click', () => openAddForPlace(g.place));
+    gal.appendChild(addTile);
+    root.appendChild(block);
+  });
+}
 
+function openAddForPlace(place){
+  $('npPlace').value = place;
+  $('newPlaceForm').classList.add('open');
+  $('newPlaceForm').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+$('addPlaceBtn').addEventListener('click', () => {
+  $('npPlace').value = '';
+  $('newPlaceForm').classList.add('open');
+  $('newPlaceForm').scrollIntoView({ behavior:'smooth', block:'center' });
+});
+$('npCancel').addEventListener('click', () => { $('newPlaceForm').classList.remove('open'); $('npMsg').textContent=''; });
+
+$('npSubmit').addEventListener('click', async () => {
+  const place = $('npPlace').value.trim();
+  const file = $('npFile').files[0];
+  if(!place || !file){ $('npMsg').className='msg err'; $('npMsg').textContent='Place name and a photo are required.'; return; }
+  $('npSubmit').disabled = true;
+  $('npMsg').className='msg ok'; $('npMsg').textContent='Uploading…';
   try{
-    const safeName = (place.toLowerCase().replace(/[^a-z0-9]+/g,'-')) + '-' + Date.now() + '.jpg';
+    const safeName = slug(place) + '-' + Date.now() + '.jpg';
     const imagePath = `assets/photos/${safeName}`;
-
     const base64 = await resizeImage(file);
     await putFile(imagePath, base64, `Add photo: ${place}`);
 
-    const { list, sha } = await loadPhotosJson();
+    const { data: list, sha } = await loadJsonFile('data/photos.json', []);
     list.push({
       id: 'p' + Date.now(),
       place,
-      region: $('region').value.trim(),
-      date: $('date').value,
-      story: $('story').value.trim(),
+      region: $('npRegion').value.trim(),
+      date: $('npDate').value,
+      story: $('npStory').value.trim(),
       image: imagePath
     });
     const encoded = b64EncodeUnicode(JSON.stringify(list, null, 2));
     await putFile('data/photos.json', encoded, `Add entry: ${place}`, sha);
 
-    showMsg('uploadMsg','ok','Added. It will appear on the site in a minute or two once GitHub Pages rebuilds.');
-    $('place').value=''; $('region').value=''; $('date').value=''; $('story').value=''; $('file').value='';
-    refreshList();
+    photos = list;
+    $('npMsg').textContent = 'Added ✓';
+    $('npPlace').value=''; $('npRegion').value=''; $('npDate').value=''; $('npStory').value=''; $('npFile').value='';
+    setTimeout(() => { $('newPlaceForm').classList.remove('open'); $('npMsg').textContent=''; }, 900);
+    renderGallery();
   }catch(e){
-    showMsg('uploadMsg','err', e.message);
+    $('npMsg').className='msg err'; $('npMsg').textContent = e.message;
   }finally{
-    $('uploadBtn').disabled = false;
+    $('npSubmit').disabled = false;
   }
 });
 
-async function refreshList(){
-  const s = getSettings();
-  if(!s.owner || !s.repo || !s.token){ return; }
+async function deletePhoto(id){
+  if(!confirm('Delete this photo from the site?')) return;
   try{
-    const { list } = await loadPhotosJson();
-    const ul = $('list');
-    ul.innerHTML = '';
-    if(!list.length){ ul.innerHTML = '<li>No photos yet.</li>'; return; }
-    list.slice().reverse().forEach(p => {
-      const li = document.createElement('li');
-      li.innerHTML = `<div class="info"><b>${p.place}</b><span>${p.date || 'no date'}${p.region ? ' · ' + p.region : ''}</span></div><button class="danger" data-id="${p.id}">Delete</button>`;
-      li.querySelector('button').addEventListener('click', () => deleteEntry(p.id));
-      ul.appendChild(li);
-    });
-  }catch(e){
-    showMsg('uploadMsg','err', e.message);
-  }
-}
-
-async function deleteEntry(id){
-  if(!confirm('Remove this photo entry from the site? (The image file stays in the repo.)')) return;
-  try{
-    const { list, sha } = await loadPhotosJson();
+    const { data: list, sha } = await loadJsonFile('data/photos.json', []);
     const updated = list.filter(p => p.id !== id);
     const encoded = b64EncodeUnicode(JSON.stringify(updated, null, 2));
-    await putFile('data/photos.json', encoded, `Remove entry ${id}`, sha);
-    refreshList();
+    await putFile('data/photos.json', encoded, `Remove photo ${id}`, sha);
+    photos = updated;
+    renderGallery();
   }catch(e){
-    showMsg('uploadMsg','err', e.message);
+    alert('Could not delete: ' + e.message);
   }
-}
-
-async function loadSiteJson(){
-  const existing = await getFile('data/site.json');
-  if(!existing) return { data: {}, sha: null };
-  const text = b64DecodeUnicode(existing.content.replace(/\n/g,''));
-  let data = {};
-  try{ data = JSON.parse(text); }catch(e){ data = {}; }
-  return { data, sha: existing.sha };
-}
-
-async function prefillSiteForm(){
-  const s = getSettings();
-  if(!s.owner || !s.repo || !s.token) return;
-  try{
-    const { data } = await loadSiteJson();
-    if(data.heroTitle) $('heroTitle').value = data.heroTitle;
-    if(data.heroSub) $('heroSub').value = data.heroSub;
-    if(data.aboutP1) $('aboutP1').value = data.aboutP1;
-    if(data.aboutP2) $('aboutP2').value = data.aboutP2;
-    if(data.aboutP3) $('aboutP3').value = data.aboutP3;
-    if(Array.isArray(data.skills)) $('skills').value = data.skills.join(', ');
-    if(data.email) $('ctEmail').value = data.email;
-    if(data.instagramHandle) $('ctInstagram').value = data.instagramHandle;
-    if(data.linkedinHandle) $('ctLinkedin').value = data.linkedinHandle;
-  }catch(e){ /* no site.json yet — leave blank, form falls back to site defaults */ }
 }
 
 $('saveSiteBtn').addEventListener('click', async () => {
-  const s = getSettings();
-  if(!s.owner || !s.repo || !s.token){ showMsg('siteMsg','err','Connect your repo and token first (step 1).'); return; }
-  $('saveSiteBtn').disabled = true;
-  showMsg('siteMsg','ok','Saving…');
+  $('editStatus').className = 'status ok';
+  $('editStatus').textContent = 'Saving…';
   try{
-    const { sha } = await loadSiteJson();
+    const { sha } = await loadJsonFile('data/site.json', {});
     const payload = {
-      heroTitle: $('heroTitle').value.trim(),
-      heroSub: $('heroSub').value.trim(),
-      aboutP1: $('aboutP1').value.trim(),
-      aboutP2: $('aboutP2').value.trim(),
-      aboutP3: $('aboutP3').value.trim(),
-      skills: $('skills').value.split(',').map(x => x.trim()).filter(Boolean),
-      email: $('ctEmail').value.trim(),
-      instagramHandle: $('ctInstagram').value.trim(),
-      linkedinHandle: $('ctLinkedin').value.trim()
+      heroTitle: $('heroTitle').textContent.trim(),
+      heroSub: $('heroSub').textContent.trim(),
+      aboutP1: $('aboutP1').textContent.trim(),
+      aboutP2: $('aboutP2').textContent.trim(),
+      aboutP3: $('aboutP3').textContent.trim(),
+      skills: currentSkills,
+      email: $('ctEmail').textContent.trim(),
+      instagramHandle: $('ctInstagram').textContent.trim().replace(/^@/,''),
+      linkedinHandle: $('ctLinkedin').textContent.trim()
     };
     const encoded = b64EncodeUnicode(JSON.stringify(payload, null, 2));
     await putFile('data/site.json', encoded, 'Update page text', sha);
-    showMsg('siteMsg','ok','Saved. Give it a minute, then refresh the main site.');
+    $('editStatus').className = 'status ok';
+    $('editStatus').textContent = 'Saved ✓ — refresh the main site in a minute to see it.';
   }catch(e){
-    showMsg('siteMsg','err', e.message);
-  }finally{
-    $('saveSiteBtn').disabled = false;
+    $('editStatus').className = 'status err';
+    $('editStatus').textContent = e.message;
   }
 });
 
-$('refreshBtn').addEventListener('click', refreshList);
-refreshList();
-prefillSiteForm();
+if(getSettings().owner && getSettings().repo && getSettings().token){
+  $('lockScreen').style.display = 'none';
+  $('appRoot').style.display = 'block';
+  $('editBar').style.display = 'flex';
+  boot();
+}
 </script>
 </body>
 </html>
