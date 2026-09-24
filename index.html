@@ -56,12 +56,12 @@
   .place-title h3{ font-size:clamp(1.5rem,3vw,2.1rem); }
   .place-title .meta{ font-size:.8rem; color:var(--paper-dim); }
 
-  .gallery{ columns:3 220px; column-gap:14px; }
+  .gallery{ columns:2 340px; column-gap:18px; }
   .frame{ position:relative; background:var(--bg-raised); border:1px solid var(--line); overflow:hidden; cursor:pointer; break-inside:avoid; margin-bottom:14px; display:block; }
   .frame img{ width:100%; height:auto; display:block; pointer-events:none; user-select:none; }
   .frame .cap{ position:absolute; left:0; right:0; bottom:0; padding:14px 16px; background:linear-gradient(0deg,rgba(0,0,0,.75),transparent); font-size:.8rem; color:var(--paper); opacity:0; transition:opacity .25s ease; }
   .frame:hover .cap{ opacity:1; }
-  @media (max-width:900px){ .gallery{ columns:2 180px; } }
+  @media (max-width:900px){ .gallery{ columns:1 280px; } }
   @media (max-width:600px){ .gallery{ columns:1; } }
 
   .empty-state{ color:var(--paper-dim); font-size:.95rem; border:1px dashed var(--line); padding:40px; text-align:center; }
@@ -90,7 +90,7 @@
   .lightbox{ position:fixed; inset:0; background:rgba(8,8,7,.94); display:none; align-items:center; justify-content:center; z-index:200; padding:5vw; perspective:1600px; }
   .lightbox.open{ display:flex; }
   .lightbox-inner{ max-width:900px; width:100%; text-align:center; }
-  .lightbox-stage{ aspect-ratio:4/5; max-height:72vh; margin:0 auto; transform-style:preserve-3d; }
+  .lightbox-stage{ aspect-ratio:4/5; max-height:84vh; margin:0 auto; transform-style:preserve-3d; }
   .lightbox-stage .box{ width:100%; height:100%; background:var(--bg-raised); border:1px solid var(--line); overflow:hidden; transform-style:preserve-3d; transform:rotateY(-90deg) scale(.9); opacity:0; transition:transform .5s cubic-bezier(.2,.8,.2,1), opacity .4s ease; will-change:transform; }
   .lightbox.open .lightbox-stage .box{ transform:rotateY(0deg) rotateX(0deg) scale(1); opacity:1; }
   .lightbox-stage .box img{ width:100%; height:100%; object-fit:contain; pointer-events:none; user-select:none; -webkit-user-drag:none; }
@@ -144,8 +144,10 @@
   <div class="section-head"><h2>About</h2></div>
   <div class="about">
     <div class="about-portrait" id="portrait">
-      <div style="font-family:'Fraunces',serif;font-size:1.6rem;color:var(--line);">Photo</div>
-      <div style="font-size:.75rem;">Add your portrait via the admin page</div>
+      <div id="portraitPlaceholder" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div style="font-family:'Fraunces',serif;font-size:1.6rem;color:var(--line);">Photo</div>
+        <div style="font-size:.75rem;">Add your portrait via the admin page</div>
+      </div>
     </div>
     <div class="about-text">
       <p id="aboutP1">I'm Al Nafis Fuad Shuvo, an international student from Bangladesh, currently based in Vienna, Austria.</p>
@@ -163,7 +165,7 @@
 
 <section id="contact">
   <h2>Let's make an image worth keeping.</h2>
-  <div class="contact-row">
+  <div class="contact-row" id="contactRow">
     <div class="contact-col"><span>Email</span><a id="contactEmail" href="mailto:shuvonafis66@gmail.com">shuvonafis66@gmail.com</a></div>
     <div class="contact-col"><span>Instagram</span><a id="contactInstagram" href="https://instagram.com/al_nafis_fuad_shuvo" target="_blank" rel="noopener">@al_nafis_fuad_shuvo</a></div>
     <div class="contact-col"><span>LinkedIn</span><a id="contactLinkedin" href="https://linkedin.com/in/nafisfuadshuvo" target="_blank" rel="noopener">nafisfuadshuvo</a></div>
@@ -215,6 +217,22 @@ async function loadSiteContent(){
     if(s.email){ document.getElementById('contactEmail').textContent = s.email; document.getElementById('contactEmail').href = 'mailto:' + s.email; }
     if(s.instagramHandle){ document.getElementById('contactInstagram').textContent = '@' + s.instagramHandle.replace(/^@/,''); document.getElementById('contactInstagram').href = 'https://instagram.com/' + s.instagramHandle.replace(/^@/,''); }
     if(s.linkedinHandle){ document.getElementById('contactLinkedin').textContent = s.linkedinHandle; document.getElementById('contactLinkedin').href = 'https://linkedin.com/in/' + s.linkedinHandle; }
+
+    if(s.portraitImage){
+      const ph = document.getElementById('portraitPlaceholder');
+      if(ph) ph.outerHTML = `<img src="${s.portraitImage}" alt="Portrait" style="pointer-events:none;">`;
+    }
+
+    if(Array.isArray(s.extraLinks) && s.extraLinks.length){
+      const row = document.getElementById('contactRow');
+      s.extraLinks.forEach(link => {
+        if(!link.label || !link.url) return;
+        const col = document.createElement('div');
+        col.className = 'contact-col';
+        col.innerHTML = `<span>${link.label}</span><a href="${link.url}" target="_blank" rel="noopener">${link.label}</a>`;
+        row.appendChild(col);
+      });
+    }
   }catch(e){ /* keep defaults already in the HTML */ }
 }
 loadSiteContent();

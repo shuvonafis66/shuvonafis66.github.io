@@ -154,12 +154,36 @@
         <span class="msg" id="npMsg"></span>
       </div>
     </div>
+    <div id="editPhotoForm" class="inline-form">
+      <label>Place name</label>
+      <input type="text" id="epPlace">
+      <div class="row">
+        <div><label>Date taken</label><input type="date" id="epDate"></div>
+        <div><label>Region (optional)</label><input type="text" id="epRegion"></div>
+      </div>
+      <label>Story / caption</label>
+      <textarea id="epStory"></textarea>
+      <label>Replace photo (optional — leave empty to keep the current one)</label>
+      <input type="file" id="epFile" accept="image/*">
+      <div class="actions">
+        <button class="btn solid" id="epSubmit">Save changes</button>
+        <button class="btn" id="epCancel">Cancel</button>
+        <span class="msg" id="epMsg"></span>
+      </div>
+    </div>
     <div id="gallery-root"></div>
   </section>
 
   <section id="about">
     <div class="section-head"><h2>About</h2></div>
     <div class="about">
+      <div style="margin-bottom:22px;">
+        <label style="display:block;font-size:.75rem;color:var(--paper-dim);margin-bottom:8px;">Your portrait photo</label>
+        <div id="portraitPreview" style="width:140px;aspect-ratio:3/4;background:var(--bg-raised);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px;color:var(--paper-dim);font-size:.75rem;text-align:center;">No portrait yet</div>
+        <input type="file" id="portraitFile" accept="image/*">
+        <button class="btn" id="portraitUploadBtn" style="margin-top:8px;">Upload portrait</button>
+        <span class="msg" id="portraitMsg" style="margin-left:10px;font-size:.78rem;"></span>
+      </div>
       <div class="about-text">
         <p id="aboutP1" contenteditable="true"></p>
         <p id="aboutP2" contenteditable="true"></p>
@@ -175,6 +199,11 @@
       <div class="contact-col"><span>Email</span><a id="ctEmail" contenteditable="true"></a></div>
       <div class="contact-col"><span>Instagram</span><a id="ctInstagram" contenteditable="true"></a></div>
       <div class="contact-col"><span>LinkedIn</span><a id="ctLinkedin" contenteditable="true"></a></div>
+    </div>
+    <div style="margin-top:24px;">
+      <label style="display:block;font-size:.75rem;color:var(--paper-dim);margin-bottom:10px;">Other social links</label>
+      <div id="extraLinksList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;"></div>
+      <button class="btn" id="addExtraLinkBtn">+ Add another link</button>
     </div>
   </section>
 </div>
@@ -264,7 +293,7 @@ async function loadJsonFile(path, fallback){
 // NOTE: since the repo is public, a determined visitor can still find an image's
 // direct URL via view-source or the browser's network tab — this is not true DRM,
 // just a strong display copy that isn't your raw camera original.
-function resizeImage(file, maxDim = 3200, quality = 0.92){
+function resizeImage(file, maxDim = 4200, quality = 0.95){
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
@@ -312,6 +341,10 @@ function fillForm(){
 
   const skills = Array.isArray(siteData.skills) && siteData.skills.length ? siteData.skills : ["Street Photography","Architecture","Travel","Austria"];
   renderSkills(skills);
+
+  if(siteData.portraitImage) showPortraitPreview(siteData.portraitImage);
+  extraLinks = Array.isArray(siteData.extraLinks) ? siteData.extraLinks.slice() : [];
+  renderExtraLinks();
 }
 
 function renderSkills(list){
@@ -356,7 +389,10 @@ function renderGallery(){
     g.items.forEach(p => {
       const frame = document.createElement('div');
       frame.className = 'frame';
-      frame.innerHTML = `<img src="${p.image}"><button class="del">Delete</button><div class="cap">${p.story ? p.story.slice(0,70) : ''}</div>`;
+      frame.innerHTML = `<img src="${p.image}"><div style="position:absolute;top:8px;right:8px;display:flex;gap:6px;"><button class="edit" style="background:rgba(15,15,14,.85);color:var(--clay);border:1px solid var(--clay);border-radius:100px;padding:5px 11px;font-size:.7rem;cursor:pointer;opacity:0;transition:opacity .2s;">Edit</button><button class="del" style="background:rgba(15,15,14,.85);color:var(--err);border:1px solid var(--err);border-radius:100px;padding:5px 11px;font-size:.7rem;cursor:pointer;opacity:0;transition:opacity .2s;">Delete</button></div><div class="cap">${p.story ? p.story.slice(0,70) : ''}</div>`;
+      frame.addEventListener('mouseenter', () => frame.querySelectorAll('.edit,.del').forEach(b=>b.style.opacity=1));
+      frame.addEventListener('mouseleave', () => frame.querySelectorAll('.edit,.del').forEach(b=>b.style.opacity=0));
+      frame.querySelector('.edit').addEventListener('click', () => openEditForm(p));
       frame.querySelector('.del').addEventListener('click', () => deletePhoto(p.id));
       gal.appendChild(frame);
     });
@@ -417,7 +453,101 @@ $('npSubmit').addEventListener('click', async () => {
   }
 });
 
-async function deletePhoto(id){
+let editingId = null;
+function openEditForm(p){
+  editingId = p.id;
+  $('epPlace').value = p.place || '';
+  $('epDate').value = p.date || '';
+  $('epRegion').value = p.region || '';
+  $('epStory').value = p.story || '';
+  $('epFile').value = '';
+  $('editPhotoForm').classList.add('open');
+  $('newPlaceForm').classList.remove('open');
+  $('editPhotoForm').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+$('epCancel').addEventListener('click', () => { $('editPhotoForm').classList.remove('open'); $('epMsg').textContent=''; editingId=null; });
+
+$('epSubmit').addEventListener('click', async () => {
+  if(!editingId) return;
+  const place = $('epPlace').value.trim();
+  if(!place){ $('epMsg').className='msg err'; $('epMsg').textContent='Place name is required.'; return; }
+  $('epSubmit').disabled = true;
+  $('epMsg').className='msg ok'; $('epMsg').textContent='Saving…';
+  try{
+    const { data: list, sha } = await loadJsonFile('data/photos.json', []);
+    const idx = list.findIndex(x => x.id === editingId);
+    if(idx === -1) throw new Error('Photo not found — refresh the list.');
+
+    const file = $('epFile').files[0];
+    if(file){
+      const safeName = slug(place) + '-' + Date.now() + '.jpg';
+      const imagePath = `assets/photos/${safeName}`;
+      const base64 = await resizeImage(file);
+      await putFile(imagePath, base64, `Replace photo: ${place}`);
+      list[idx].image = imagePath;
+    }
+    list[idx].place = place;
+    list[idx].date = $('epDate').value;
+    list[idx].region = $('epRegion').value.trim();
+    list[idx].story = $('epStory').value.trim();
+
+    const encoded = b64EncodeUnicode(JSON.stringify(list, null, 2));
+    await putFile('data/photos.json', encoded, `Edit entry: ${place}`, sha);
+
+    photos = list;
+    $('epMsg').textContent = 'Saved ✓';
+    setTimeout(() => { $('editPhotoForm').classList.remove('open'); $('epMsg').textContent=''; editingId=null; }, 800);
+    renderGallery();
+  }catch(e){
+    $('epMsg').className='msg err'; $('epMsg').textContent = e.message;
+  }finally{
+    $('epSubmit').disabled = false;
+  }
+});
+
+// ---- portrait upload ----
+$('portraitUploadBtn').addEventListener('click', async () => {
+  const file = $('portraitFile').files[0];
+  if(!file){ $('portraitMsg').className='msg err'; $('portraitMsg').textContent='Choose a photo first.'; return; }
+  $('portraitUploadBtn').disabled = true;
+  $('portraitMsg').className='msg ok'; $('portraitMsg').textContent='Uploading…';
+  try{
+    const base64 = await resizeImage(file, 1600, 0.92);
+    const imagePath = 'assets/photos/profile.jpg';
+    const existing = await getFile(imagePath);
+    await putFile(imagePath, base64, 'Update portrait', existing ? existing.sha : null);
+    siteData.portraitImage = imagePath;
+    showPortraitPreview(imagePath);
+    $('portraitMsg').textContent = 'Uploaded ✓ — press "Save text" below to publish.';
+  }catch(e){
+    $('portraitMsg').className='msg err'; $('portraitMsg').textContent = e.message;
+  }finally{
+    $('portraitUploadBtn').disabled = false;
+  }
+});
+function showPortraitPreview(path){
+  $('portraitPreview').innerHTML = `<img src="${path}" style="width:100%;height:100%;object-fit:cover;">`;
+}
+
+// ---- extra social links ----
+let extraLinks = [];
+function renderExtraLinks(){
+  const box = $('extraLinksList');
+  box.innerHTML = '';
+  extraLinks.forEach((link, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:8px;';
+    row.innerHTML = `<input type="text" placeholder="Label (e.g. X / Twitter)" value="${link.label||''}" style="flex:1;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:9px 12px;border-radius:2px;font-size:.85rem;">
+                      <input type="text" placeholder="https://..." value="${link.url||''}" style="flex:2;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:9px 12px;border-radius:2px;font-size:.85rem;">
+                      <button class="btn danger" style="padding:6px 12px;">✕</button>`;
+    const [labelInput, urlInput, rmBtn] = row.children;
+    labelInput.addEventListener('input', () => extraLinks[i].label = labelInput.value);
+    urlInput.addEventListener('input', () => extraLinks[i].url = urlInput.value);
+    rmBtn.addEventListener('click', () => { extraLinks.splice(i,1); renderExtraLinks(); });
+    box.appendChild(row);
+  });
+}
+$('addExtraLinkBtn').addEventListener('click', () => { extraLinks.push({label:'',url:''}); renderExtraLinks(); });
   if(!confirm('Delete this photo from the site?')) return;
   try{
     const { data: list, sha } = await loadJsonFile('data/photos.json', []);
@@ -445,7 +575,9 @@ $('saveSiteBtn').addEventListener('click', async () => {
       skills: currentSkills,
       email: $('ctEmail').textContent.trim(),
       instagramHandle: $('ctInstagram').textContent.trim().replace(/^@/,''),
-      linkedinHandle: $('ctLinkedin').textContent.trim()
+      linkedinHandle: $('ctLinkedin').textContent.trim(),
+      portraitImage: siteData.portraitImage || '',
+      extraLinks: extraLinks.filter(l => l.label && l.url)
     };
     const encoded = b64EncodeUnicode(JSON.stringify(payload, null, 2));
     await putFile('data/site.json', encoded, 'Update page text', sha);
