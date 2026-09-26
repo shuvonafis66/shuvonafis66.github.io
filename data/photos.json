@@ -39,5 +39,14 @@
     "story": "",
     "type": "photo",
     "image": "assets/photos/vienna-1790423404960-0.jpg"
+  },
+  {
+    "id": "p1790453877523-0",
+    "place": "Vienna",
+    "region": "",
+    "date": "",
+    "story": "",
+    "type": "video",
+    "video": "assets/photos/vienna-1790453845435-0.webm"
   }
 ]
