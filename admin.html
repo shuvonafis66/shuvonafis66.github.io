@@ -548,6 +548,8 @@ function renderExtraLinks(){
   });
 }
 $('addExtraLinkBtn').addEventListener('click', () => { extraLinks.push({label:'',url:''}); renderExtraLinks(); });
+
+async function deletePhoto(id){
   if(!confirm('Delete this photo from the site?')) return;
   try{
     const { data: list, sha } = await loadJsonFile('data/photos.json', []);
