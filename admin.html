@@ -325,6 +325,60 @@ function fileToBase64Raw(file){
   });
 }
 
+// If a video is too big for GitHub's upload limit, re-encode it in the browser at a
+// lower bitrate while keeping the exact same width/height (no downscaling) — so it
+// still looks like the original resolution, just compressed harder, like any web video.
+const VIDEO_SAFE_MB = 30; // stays comfortably under GitHub's ~100MB API limit after base64 overhead
+
+function compressVideoIfNeeded(file, statusEl){
+  if(file.size <= VIDEO_SAFE_MB * 1024 * 1024) return Promise.resolve(file);
+
+  if(!(window.MediaRecorder && HTMLVideoElement.prototype.captureStream)){
+    if(statusEl) statusEl.textContent = 'This browser can\'t auto-compress video — try Chrome, or shrink the file yourself first.';
+    return Promise.resolve(file); // fall through and let the upload attempt (and fail) with a clear GitHub error
+  }
+
+  return new Promise((resolve) => {
+    const video = document.createElement('video');
+    video.muted = true;
+    video.playsInline = true;
+    video.src = URL.createObjectURL(file);
+
+    video.onloadedmetadata = () => {
+      const duration = video.duration || 10;
+      const targetBits = VIDEO_SAFE_MB * 8 * 1024 * 1024 * 0.85; // small safety margin
+      const videoBitsPerSecond = Math.max(500000, Math.floor(targetBits / duration));
+
+      const mimeCandidates = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+      const mimeType = mimeCandidates.find(t => MediaRecorder.isTypeSupported(t)) || 'video/webm';
+
+      let stream;
+      try{ stream = video.captureStream(); }catch(e){ resolve(file); return; }
+
+      let recorder;
+      try{ recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond }); }
+      catch(e){ resolve(file); return; }
+
+      const chunks = [];
+      recorder.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
+      recorder.onstop = () => {
+        URL.revokeObjectURL(video.src);
+        const blob = new Blob(chunks, { type: mimeType });
+        const newName = file.name.replace(/\.[^.]+$/, '') + '.webm';
+        resolve(new File([blob], newName, { type: mimeType }));
+      };
+      recorder.onerror = () => resolve(file);
+
+      video.onended = () => { try{ recorder.stop(); }catch(e){} };
+      video.play().then(() => {
+        if(statusEl) statusEl.textContent = `Compressing video (~${Math.ceil(duration)}s, please wait)…`;
+        recorder.start();
+      }).catch(() => resolve(file));
+    };
+    video.onerror = () => resolve(file);
+  });
+}
+
 let photos = [];
 let siteData = {};
 let currentSkills = [];
@@ -439,11 +493,15 @@ $('npSubmit').addEventListener('click', async () => {
   try{
     const newEntries = [];
     for(let i = 0; i < files.length; i++){
-      const file = files[i];
+      let file = files[i];
       const isVideo = file.type.startsWith('video/');
       $('npMsg').className='msg ok'; $('npMsg').textContent = `Uploading ${i+1} of ${files.length}…`;
 
-      const ext = isVideo ? (file.name.split('.').pop() || 'mp4') : 'jpg';
+      if(isVideo){
+        file = await compressVideoIfNeeded(file, $('npMsg'));
+      }
+
+      const ext = isVideo ? (file.name.split('.').pop() || 'webm') : 'jpg';
       const safeName = `${slug(place)}-${Date.now()}-${i}.${ext}`;
       const mediaPath = `assets/photos/${safeName}`;
       const base64 = isVideo ? await fileToBase64Raw(file) : await resizeImage(file);
@@ -504,10 +562,13 @@ $('epSubmit').addEventListener('click', async () => {
     const idx = list.findIndex(x => x.id === editingId);
     if(idx === -1) throw new Error('Photo not found — refresh the list.');
 
-    const file = $('epFile').files[0];
+    let file = $('epFile').files[0];
     if(file){
-      const isVideo = file.type.startsWith('video/');
-      const ext = isVideo ? (file.name.split('.').pop() || 'mp4') : 'jpg';
+      let isVideo = file.type.startsWith('video/');
+      if(isVideo){
+        file = await compressVideoIfNeeded(file, $('epMsg'));
+      }
+      const ext = isVideo ? (file.name.split('.').pop() || 'webm') : 'jpg';
       const mediaPath = `assets/photos/${slug(place)}-${Date.now()}.${ext}`;
       const base64 = isVideo ? await fileToBase64Raw(file) : await resizeImage(file);
       await putFile(mediaPath, base64, `Replace ${isVideo ? 'video' : 'photo'}: ${place}`);
