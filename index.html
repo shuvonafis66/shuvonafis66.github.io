@@ -310,13 +310,12 @@ function render(){
       if(idx === 0) frame.classList.add('feature');
       const isVideo = p.type === 'video';
       const mediaTag = isVideo
-        ? `<video src="${p.video}" muted loop playsinline preload="metadata" controlsList="nodownload noremoteplayback" disablePictureInPicture></video><div class="play-badge">▶</div>`
+        ? `<video src="${p.video}" autoplay muted loop playsinline preload="auto" controlsList="nodownload noremoteplayback" disablePictureInPicture></video>`
         : `<img src="${p.image}" alt="${(p.story||g.place).replace(/"/g,'&quot;')}" loading="lazy">`;
       frame.innerHTML = `${mediaTag}<div class="cap">${p.story ? p.story.slice(0,80) : g.place}</div>`;
       if(isVideo){
         const vid = frame.querySelector('video');
-        frame.addEventListener('mouseenter', () => vid.play().catch(()=>{}));
-        frame.addEventListener('mouseleave', () => { vid.pause(); vid.currentTime = 0; });
+        vid.play().catch(()=>{ /* some mobile browsers block true autoplay until the user has interacted with the page once */ });
       }else if(idx !== 0){
         // size the tile to the photo's real shape so landscape/portrait photos
         // don't get force-cropped into the wrong box
