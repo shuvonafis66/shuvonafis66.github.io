@@ -56,13 +56,15 @@
   .place-title h3{ font-size:clamp(1.5rem,3vw,2.1rem); }
   .place-title .meta{ font-size:.8rem; color:var(--paper-dim); }
 
-  .gallery{ columns:2 340px; column-gap:18px; }
-  .frame{ position:relative; background:var(--bg-raised); border:1px solid var(--line); overflow:hidden; cursor:pointer; break-inside:avoid; margin-bottom:14px; display:block; }
-  .frame img{ width:100%; height:auto; display:block; pointer-events:none; user-select:none; }
+  .gallery{ display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:20px; perspective:1400px; }
+  .frame{ position:relative; background:var(--bg-raised); border:1px solid var(--line); overflow:hidden; aspect-ratio:4/5; cursor:pointer; transform-style:preserve-3d; transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s ease; }
+  .frame img, .frame video{ width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; user-select:none; }
+  .frame:hover{ transform:translateY(-6px) rotateX(4deg) rotateY(-4deg) scale(1.03); box-shadow:0 28px 55px -20px rgba(0,0,0,.65); z-index:2; }
+  .frame .play-badge{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:2.2rem; color:var(--paper); text-shadow:0 2px 12px rgba(0,0,0,.6); pointer-events:none; }
   .frame .cap{ position:absolute; left:0; right:0; bottom:0; padding:14px 16px; background:linear-gradient(0deg,rgba(0,0,0,.75),transparent); font-size:.8rem; color:var(--paper); opacity:0; transition:opacity .25s ease; }
   .frame:hover .cap{ opacity:1; }
-  @media (max-width:900px){ .gallery{ columns:1 280px; } }
-  @media (max-width:600px){ .gallery{ columns:1; } }
+  @media (max-width:900px){ .gallery{ grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); } }
+  @media (max-width:600px){ .gallery{ grid-template-columns:1fr; } }
 
   .empty-state{ color:var(--paper-dim); font-size:.95rem; border:1px dashed var(--line); padding:40px; text-align:center; }
 
@@ -196,8 +198,8 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 // Prevent right-click save and dragging on all images (basic deterrent only —
 // nothing on the open web can fully stop a determined download, e.g. screenshots)
-document.addEventListener('contextmenu', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });
-document.addEventListener('dragstart', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });
+document.addEventListener('contextmenu', e => { if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') e.preventDefault(); });
+document.addEventListener('dragstart', e => { if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') e.preventDefault(); });
 
 async function loadSiteContent(){
   try{
@@ -302,7 +304,16 @@ function render(){
     g.items.forEach(p => {
       const frame = document.createElement('div');
       frame.className = 'frame';
-      frame.innerHTML = `<img src="${p.image}" alt="${(p.story||g.place).replace(/"/g,'&quot;')}" loading="lazy"><div class="cap">${p.story ? p.story.slice(0,80) : g.place}</div>`;
+      const isVideo = p.type === 'video';
+      const mediaTag = isVideo
+        ? `<video src="${p.video}" muted loop playsinline preload="metadata" controlsList="nodownload noremoteplayback" disablePictureInPicture></video><div class="play-badge">▶</div>`
+        : `<img src="${p.image}" alt="${(p.story||g.place).replace(/"/g,'&quot;')}" loading="lazy">`;
+      frame.innerHTML = `${mediaTag}<div class="cap">${p.story ? p.story.slice(0,80) : g.place}</div>`;
+      if(isVideo){
+        const vid = frame.querySelector('video');
+        frame.addEventListener('mouseenter', () => vid.play().catch(()=>{}));
+        frame.addEventListener('mouseleave', () => { vid.pause(); vid.currentTime = 0; });
+      }
       frame.addEventListener('click', () => openLightbox(photos.indexOf(p)));
       gal.appendChild(frame);
     });
@@ -323,17 +334,24 @@ function openLightbox(index){
 function showPhoto(){
   const p = photos[currentIndex];
   if(!p) return;
-  box.innerHTML = `<img src="${p.image}" alt="">`;
+  box.innerHTML = (p.type === 'video')
+    ? `<video src="${p.video}" controls autoplay playsinline controlsList="nodownload noremoteplayback" disablePictureInPicture></video>`
+    : `<img src="${p.image}" alt="">`;
   document.getElementById('capPlace').textContent = p.place || '';
   document.getElementById('capStory').textContent = p.story || '';
   document.getElementById('capDate').textContent = p.date || '';
 }
 
-document.getElementById('lightboxClose').addEventListener('click', () => lightbox.classList.remove('open'));
-lightbox.addEventListener('click', e => { if(e.target === lightbox) lightbox.classList.remove('open'); });
+function closeLightbox(){
+  const v = box.querySelector('video');
+  if(v) v.pause();
+  lightbox.classList.remove('open');
+}
+document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', e => { if(e.target === lightbox) closeLightbox(); });
 document.addEventListener('keydown', e => {
   if(!lightbox.classList.contains('open')) return;
-  if(e.key === 'Escape') lightbox.classList.remove('open');
+  if(e.key === 'Escape') closeLightbox();
   if(e.key === 'ArrowRight') step(1);
   if(e.key === 'ArrowLeft') step(-1);
 });

@@ -55,14 +55,14 @@
   .place-title{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:2vh; }
   .place-title h3{ font-size:clamp(1.3rem,2.6vw,1.8rem); }
 
-  .gallery{ columns:3 220px; column-gap:14px; }
-  .frame{ position:relative; background:var(--bg-raised); border:1px solid var(--line); overflow:hidden; break-inside:avoid; margin-bottom:14px; }
-  .frame img{ width:100%; height:auto; display:block; pointer-events:none; user-select:none; }
+  .gallery{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:16px; }
+  .frame{ position:relative; background:var(--bg-raised); border:1px solid var(--line); overflow:hidden; aspect-ratio:4/5; }
+  .frame img, .frame video{ width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; user-select:none; }
   .frame .del{ position:absolute; top:8px; right:8px; background:rgba(15,15,14,.85); color:var(--err); border:1px solid var(--err); border-radius:100px; padding:5px 11px; font-size:.7rem; cursor:pointer; opacity:0; transition:opacity .2s; }
   .frame:hover .del{ opacity:1; }
   .frame .cap{ position:absolute; left:0; right:0; bottom:0; padding:12px 14px; background:linear-gradient(0deg,rgba(0,0,0,.8),transparent); font-size:.75rem; }
 
-  .add-frame{ break-inside:avoid; margin-bottom:14px; border:1px dashed var(--line); aspect-ratio:4/5; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--paper-dim); font-size:.85rem; text-align:center; padding:14px; }
+  .add-frame{ border:1px dashed var(--line); aspect-ratio:4/5; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--paper-dim); font-size:.85rem; text-align:center; padding:14px; }
   .add-frame:hover{ border-color:var(--clay); color:var(--clay); }
 
   .inline-form{ background:var(--bg-raised); border:1px solid var(--clay); padding:20px; margin-bottom:6vh; display:none; }
@@ -146,10 +146,10 @@
       </div>
       <label>Story / caption</label>
       <textarea id="npStory"></textarea>
-      <label>Photo file</label>
-      <input type="file" id="npFile" accept="image/*">
+      <label>Photos or short videos (you can select several at once)</label>
+      <input type="file" id="npFile" accept="image/*,video/*" multiple>
       <div class="actions">
-        <button class="btn solid" id="npSubmit">Add photo</button>
+        <button class="btn solid" id="npSubmit">Add to site</button>
         <button class="btn" id="npCancel">Cancel</button>
         <span class="msg" id="npMsg"></span>
       </div>
@@ -163,8 +163,8 @@
       </div>
       <label>Story / caption</label>
       <textarea id="epStory"></textarea>
-      <label>Replace photo (optional — leave empty to keep the current one)</label>
-      <input type="file" id="epFile" accept="image/*">
+      <label>Replace with a new photo or video (optional — leave empty to keep the current one)</label>
+      <input type="file" id="epFile" accept="image/*,video/*">
       <div class="actions">
         <button class="btn solid" id="epSubmit">Save changes</button>
         <button class="btn" id="epCancel">Cancel</button>
@@ -316,6 +316,15 @@ function resizeImage(file, maxDim = 4200, quality = 0.95){
 
 function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
 
+function fileToBase64Raw(file){
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result.split(',')[1]);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
 let photos = [];
 let siteData = {};
 let currentSkills = [];
@@ -389,9 +398,13 @@ function renderGallery(){
     g.items.forEach(p => {
       const frame = document.createElement('div');
       frame.className = 'frame';
-      frame.innerHTML = `<img src="${p.image}"><div style="position:absolute;top:8px;right:8px;display:flex;gap:6px;"><button class="edit" style="background:rgba(15,15,14,.85);color:var(--clay);border:1px solid var(--clay);border-radius:100px;padding:5px 11px;font-size:.7rem;cursor:pointer;opacity:0;transition:opacity .2s;">Edit</button><button class="del" style="background:rgba(15,15,14,.85);color:var(--err);border:1px solid var(--err);border-radius:100px;padding:5px 11px;font-size:.7rem;cursor:pointer;opacity:0;transition:opacity .2s;">Delete</button></div><div class="cap">${p.story ? p.story.slice(0,70) : ''}</div>`;
-      frame.addEventListener('mouseenter', () => frame.querySelectorAll('.edit,.del').forEach(b=>b.style.opacity=1));
-      frame.addEventListener('mouseleave', () => frame.querySelectorAll('.edit,.del').forEach(b=>b.style.opacity=0));
+      const isVideo = p.type === 'video';
+      const mediaTag = isVideo
+        ? `<video src="${p.video}" muted loop playsinline></video><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.8rem;pointer-events:none;">▶</div>`
+        : `<img src="${p.image}">`;
+      frame.innerHTML = `${mediaTag}<div style="position:absolute;top:8px;right:8px;display:flex;gap:6px;"><button class="edit" style="background:rgba(15,15,14,.85);color:var(--clay);border:1px solid var(--clay);border-radius:100px;padding:5px 11px;font-size:.7rem;cursor:pointer;opacity:0;transition:opacity .2s;">Edit</button><button class="del" style="background:rgba(15,15,14,.85);color:var(--err);border:1px solid var(--err);border-radius:100px;padding:5px 11px;font-size:.7rem;cursor:pointer;opacity:0;transition:opacity .2s;">Delete</button></div><div class="cap">${p.story ? p.story.slice(0,70) : ''}</div>`;
+      frame.addEventListener('mouseenter', () => { frame.querySelectorAll('.edit,.del').forEach(b=>b.style.opacity=1); if(isVideo) frame.querySelector('video').play().catch(()=>{}); });
+      frame.addEventListener('mouseleave', () => { frame.querySelectorAll('.edit,.del').forEach(b=>b.style.opacity=0); if(isVideo){ const v=frame.querySelector('video'); v.pause(); v.currentTime=0; } });
       frame.querySelector('.edit').addEventListener('click', () => openEditForm(p));
       frame.querySelector('.del').addEventListener('click', () => deletePhoto(p.id));
       gal.appendChild(frame);
@@ -419,32 +432,45 @@ $('npCancel').addEventListener('click', () => { $('newPlaceForm').classList.remo
 
 $('npSubmit').addEventListener('click', async () => {
   const place = $('npPlace').value.trim();
-  const file = $('npFile').files[0];
-  if(!place || !file){ $('npMsg').className='msg err'; $('npMsg').textContent='Place name and a photo are required.'; return; }
+  const files = Array.from($('npFile').files);
+  if(!place || files.length === 0){ $('npMsg').className='msg err'; $('npMsg').textContent='Place name and at least one photo/video are required.'; return; }
   $('npSubmit').disabled = true;
-  $('npMsg').className='msg ok'; $('npMsg').textContent='Uploading…';
+
   try{
-    const safeName = slug(place) + '-' + Date.now() + '.jpg';
-    const imagePath = `assets/photos/${safeName}`;
-    const base64 = await resizeImage(file);
-    await putFile(imagePath, base64, `Add photo: ${place}`);
+    const newEntries = [];
+    for(let i = 0; i < files.length; i++){
+      const file = files[i];
+      const isVideo = file.type.startsWith('video/');
+      $('npMsg').className='msg ok'; $('npMsg').textContent = `Uploading ${i+1} of ${files.length}…`;
 
+      const ext = isVideo ? (file.name.split('.').pop() || 'mp4') : 'jpg';
+      const safeName = `${slug(place)}-${Date.now()}-${i}.${ext}`;
+      const mediaPath = `assets/photos/${safeName}`;
+      const base64 = isVideo ? await fileToBase64Raw(file) : await resizeImage(file);
+      await putFile(mediaPath, base64, `Add ${isVideo ? 'video' : 'photo'}: ${place}`);
+
+      newEntries.push({
+        id: 'p' + Date.now() + '-' + i,
+        place,
+        region: $('npRegion').value.trim(),
+        date: $('npDate').value,
+        story: $('npStory').value.trim(),
+        type: isVideo ? 'video' : 'photo',
+        image: isVideo ? undefined : mediaPath,
+        video: isVideo ? mediaPath : undefined
+      });
+    }
+
+    $('npMsg').textContent = 'Saving list…';
     const { data: list, sha } = await loadJsonFile('data/photos.json', []);
-    list.push({
-      id: 'p' + Date.now(),
-      place,
-      region: $('npRegion').value.trim(),
-      date: $('npDate').value,
-      story: $('npStory').value.trim(),
-      image: imagePath
-    });
-    const encoded = b64EncodeUnicode(JSON.stringify(list, null, 2));
-    await putFile('data/photos.json', encoded, `Add entry: ${place}`, sha);
+    const updated = list.concat(newEntries);
+    const encoded = b64EncodeUnicode(JSON.stringify(updated, null, 2));
+    await putFile('data/photos.json', encoded, `Add ${newEntries.length} item(s): ${place}`, sha);
 
-    photos = list;
-    $('npMsg').textContent = 'Added ✓';
+    photos = updated;
+    $('npMsg').className='msg ok'; $('npMsg').textContent = `Added ${newEntries.length} item(s) ✓`;
     $('npPlace').value=''; $('npRegion').value=''; $('npDate').value=''; $('npStory').value=''; $('npFile').value='';
-    setTimeout(() => { $('newPlaceForm').classList.remove('open'); $('npMsg').textContent=''; }, 900);
+    setTimeout(() => { $('newPlaceForm').classList.remove('open'); $('npMsg').textContent=''; }, 1200);
     renderGallery();
   }catch(e){
     $('npMsg').className='msg err'; $('npMsg').textContent = e.message;
@@ -480,11 +506,14 @@ $('epSubmit').addEventListener('click', async () => {
 
     const file = $('epFile').files[0];
     if(file){
-      const safeName = slug(place) + '-' + Date.now() + '.jpg';
-      const imagePath = `assets/photos/${safeName}`;
-      const base64 = await resizeImage(file);
-      await putFile(imagePath, base64, `Replace photo: ${place}`);
-      list[idx].image = imagePath;
+      const isVideo = file.type.startsWith('video/');
+      const ext = isVideo ? (file.name.split('.').pop() || 'mp4') : 'jpg';
+      const mediaPath = `assets/photos/${slug(place)}-${Date.now()}.${ext}`;
+      const base64 = isVideo ? await fileToBase64Raw(file) : await resizeImage(file);
+      await putFile(mediaPath, base64, `Replace ${isVideo ? 'video' : 'photo'}: ${place}`);
+      list[idx].type = isVideo ? 'video' : 'photo';
+      list[idx].image = isVideo ? undefined : mediaPath;
+      list[idx].video = isVideo ? mediaPath : undefined;
     }
     list[idx].place = place;
     list[idx].date = $('epDate').value;
