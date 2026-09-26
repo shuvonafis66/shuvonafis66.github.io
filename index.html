@@ -56,15 +56,18 @@
   .place-title h3{ font-size:clamp(1.5rem,3vw,2.1rem); }
   .place-title .meta{ font-size:.8rem; color:var(--paper-dim); }
 
-  .gallery{ display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:20px; perspective:1400px; }
-  .frame{ position:relative; background:var(--bg-raised); border:1px solid var(--line); overflow:hidden; aspect-ratio:4/5; cursor:pointer; transform-style:preserve-3d; transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s ease; }
+  .gallery{ display:grid; grid-template-columns:repeat(auto-fill, minmax(190px,1fr)); grid-auto-rows:190px; grid-auto-flow:dense; gap:16px; perspective:1400px; }
+  .frame{ position:relative; background:var(--bg-raised); border:1px solid var(--line); overflow:hidden; cursor:pointer; transform-style:preserve-3d; transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s ease; grid-column:span 1; grid-row:span 1; }
+  .frame.landscape{ grid-column:span 2; }
+  .frame.portrait{ grid-row:span 2; }
+  .frame.feature{ grid-column:span 2; grid-row:span 2; }
   .frame img, .frame video{ width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; user-select:none; }
   .frame:hover{ transform:translateY(-6px) rotateX(4deg) rotateY(-4deg) scale(1.03); box-shadow:0 28px 55px -20px rgba(0,0,0,.65); z-index:2; }
   .frame .play-badge{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:2.2rem; color:var(--paper); text-shadow:0 2px 12px rgba(0,0,0,.6); pointer-events:none; }
   .frame .cap{ position:absolute; left:0; right:0; bottom:0; padding:14px 16px; background:linear-gradient(0deg,rgba(0,0,0,.75),transparent); font-size:.8rem; color:var(--paper); opacity:0; transition:opacity .25s ease; }
   .frame:hover .cap{ opacity:1; }
-  @media (max-width:900px){ .gallery{ grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); } }
-  @media (max-width:600px){ .gallery{ grid-template-columns:1fr; } }
+  @media (max-width:900px){ .gallery{ grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); grid-auto-rows:150px; } }
+  @media (max-width:600px){ .gallery{ grid-template-columns:repeat(2, 1fr); } .frame.feature{ grid-column:span 2; } }
 
   .empty-state{ color:var(--paper-dim); font-size:.95rem; border:1px dashed var(--line); padding:40px; text-align:center; }
 
@@ -301,9 +304,10 @@ function render(){
       <div class="gallery"></div>
     `;
     const gal = block.querySelector('.gallery');
-    g.items.forEach(p => {
+    g.items.forEach((p, idx) => {
       const frame = document.createElement('div');
       frame.className = 'frame';
+      if(idx === 0) frame.classList.add('feature');
       const isVideo = p.type === 'video';
       const mediaTag = isVideo
         ? `<video src="${p.video}" muted loop playsinline preload="metadata" controlsList="nodownload noremoteplayback" disablePictureInPicture></video><div class="play-badge">▶</div>`
@@ -313,6 +317,16 @@ function render(){
         const vid = frame.querySelector('video');
         frame.addEventListener('mouseenter', () => vid.play().catch(()=>{}));
         frame.addEventListener('mouseleave', () => { vid.pause(); vid.currentTime = 0; });
+      }else if(idx !== 0){
+        // size the tile to the photo's real shape so landscape/portrait photos
+        // don't get force-cropped into the wrong box
+        const img = frame.querySelector('img');
+        const applyShape = () => {
+          const ratio = img.naturalWidth / img.naturalHeight;
+          if(ratio > 1.25) frame.classList.add('landscape');
+          else if(ratio < 0.8) frame.classList.add('portrait');
+        };
+        if(img.complete) applyShape(); else img.addEventListener('load', applyShape);
       }
       frame.addEventListener('click', () => openLightbox(photos.indexOf(p)));
       gal.appendChild(frame);
