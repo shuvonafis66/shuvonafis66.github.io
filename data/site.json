@@ -8,11 +8,17 @@
     "Street Photography",
     "Architecture",
     "Travel",
-    "Austria"
+    "Austria",
+    "Food Photography"
   ],
   "email": "shuvonafis66@gmail.com",
   "instagramHandle": "al_nafis_fuad_shuvo",
   "linkedinHandle": "nafisfuadshuvo",
   "portraitImage": "assets/photos/profile.jpg",
-  "extraLinks": []
+  "extraLinks": [
+    {
+      "label": "Youtube",
+      "url": "https://www.youtube.com/@AustriaUnfilteredwithFuad"
+    }
+  ]
 }
