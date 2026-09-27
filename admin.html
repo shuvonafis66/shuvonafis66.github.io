@@ -134,8 +134,12 @@
   <section id="work">
     <div class="section-head">
       <h2>Selected work</h2>
-      <button class="btn solid" id="addPlaceBtn">+ Add a new place</button>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button class="btn" id="optimizeBtn">⚡ Speed up old photos</button>
+        <button class="btn solid" id="addPlaceBtn">+ Add a new place</button>
+      </div>
     </div>
+    <div id="optimizeStatus" style="font-size:.78rem;color:var(--paper-dim);margin-bottom:3vh;display:none;"></div>
     <div id="newPlaceForm" class="inline-form">
       <label>Place name</label>
       <input type="text" id="npPlace" placeholder="e.g. Salzburg">
@@ -327,6 +331,49 @@ function processImage(file, fullDim = 2400, fullQ = 0.86, thumbDim = 1200, thumb
     img.src = url;
   });
 }
+
+// One-time helper: older photos uploaded before the thumb/full split only have a
+// heavy "full" image and no light "thumb" — this fetches each one, makes a fast
+// preview, and fills in the missing thumb so the grid loads quickly for everyone.
+async function optimizeOldPhotos(){
+  const statusEl = $('optimizeStatus');
+  statusEl.style.display = 'block';
+  statusEl.textContent = 'Checking for older photos…';
+  $('optimizeBtn').disabled = true;
+  try{
+    const { data: list, sha } = await loadJsonFile('data/photos.json', []);
+    const missing = list.filter(p => p.type !== 'video' && p.image && !p.thumb);
+    if(!missing.length){
+      statusEl.textContent = 'Every photo already has a fast preview ✓';
+      return;
+    }
+    for(let i = 0; i < missing.length; i++){
+      const p = missing[i];
+      statusEl.textContent = `Optimizing ${i+1} of ${missing.length}: ${p.place}…`;
+      try{
+        const resp = await fetch(p.image, { cache: 'no-store' });
+        const blob = await resp.blob();
+        const file = new File([blob], 'src.jpg', { type: blob.type || 'image/jpeg' });
+        const { thumb } = await processImage(file);
+        const thumbPath = p.image.replace(/\.[^.]+$/, '') + '-thumb.jpg';
+        await putFile(thumbPath, thumb, `Add preview for ${p.place}`);
+        p.thumb = thumbPath;
+      }catch(e){
+        console.error('Skipped one photo:', e);
+      }
+    }
+    const encoded = b64EncodeUnicode(JSON.stringify(list, null, 2));
+    await putFile('data/photos.json', encoded, 'Add previews for older photos', sha);
+    photos = list;
+    renderGallery();
+    statusEl.textContent = `Done — ${missing.length} photo(s) optimized ✓ Refresh the main site in a minute to see faster loading.`;
+  }catch(e){
+    statusEl.textContent = 'Something went wrong: ' + e.message;
+  }finally{
+    $('optimizeBtn').disabled = false;
+  }
+}
+$('optimizeBtn').addEventListener('click', optimizeOldPhotos);
 
 function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
 
