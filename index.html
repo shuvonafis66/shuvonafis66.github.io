@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Al Nafis Fuad Shuvo — Photography</title>
+<meta name="description" content="Photography portfolio of Al Nafis Fuad Shuvo — street, architecture and travel photography from Vienna and across Austria.">
+<meta name="theme-color" content="#0f0f0e">
+<meta property="og:title" content="Al Nafis Fuad Shuvo — Photography">
+<meta property="og:description" content="Street, architecture and travel photography from Vienna and across Austria.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f0f0e'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='28' fill='%23b98a5a' text-anchor='middle'%3EAN%3C/text%3E%3C/svg%3E">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Al Nafis Fuad Shuvo","jobTitle":"Photographer","address":{"@type":"PostalAddress","addressLocality":"Vienna","addressCountry":"AT"},"knowsAbout":["Street Photography","Architecture","Travel Photography","Austria"]}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -11,6 +21,7 @@
   :root{
     --bg:#0f0f0e; --bg-raised:#171716; --line:#2a2a28;
     --paper:#eee9df; --paper-dim:#9c968a; --clay:#b98a5a; --focus:#d7b98a;
+    --ease:cubic-bezier(.2,.7,.2,1);
   }
   *{ margin:0; padding:0; box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
@@ -18,75 +29,110 @@
   a{ color:inherit; }
   ::selection{ background:var(--clay); color:#0f0f0e; }
   :focus-visible{ outline:2px solid var(--focus); outline-offset:3px; }
+  ::-webkit-scrollbar{ width:10px; }
+  ::-webkit-scrollbar-track{ background:var(--bg); }
+  ::-webkit-scrollbar-thumb{ background:var(--line); border-radius:8px; }
+  ::-webkit-scrollbar-thumb:hover{ background:var(--clay); }
   @media (prefers-reduced-motion:reduce){ *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; } }
   h1,h2,h3{ font-family:'Fraunces',serif; font-weight:400; letter-spacing:-0.01em; }
   img{ -webkit-touch-callout:none; }
 
-  nav{ position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:28px 6vw; mix-blend-mode:difference; }
+  /* cinematic film grain */
+  .grain{ position:fixed; inset:-50%; width:200%; height:200%; z-index:150; pointer-events:none; opacity:.055;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grain 9s steps(8) infinite; }
+  @keyframes grain{ 0%,100%{transform:translate(0,0)} 20%{transform:translate(-2%,1%)} 40%{transform:translate(1%,-2%)} 60%{transform:translate(-1%,2%)} 80%{transform:translate(2%,-1%)} }
+
+  nav{ position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:28px 6vw; mix-blend-mode:difference; transition:padding .35s var(--ease), background .35s var(--ease), mix-blend-mode .35s; }
+  nav.scrolled{ padding:14px 6vw; background:rgba(15,15,14,.72); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); mix-blend-mode:normal; border-bottom:1px solid rgba(42,42,40,.6); }
   .nav-name{ font-family:'Fraunces',serif; font-size:1.05rem; }
   .nav-links{ display:flex; gap:32px; list-style:none; font-size:0.9rem; }
   .nav-links a{ text-decoration:none; position:relative; }
-  .nav-links a::after{ content:''; position:absolute; left:0; bottom:-4px; width:0; height:1px; background:var(--paper); transition:width .3s ease; }
+  .nav-links a::after{ content:''; position:absolute; left:0; bottom:-4px; width:0; height:1px; background:var(--paper); transition:width .3s var(--ease); }
   .nav-links a:hover::after{ width:100%; }
   @media (max-width:640px){ .nav-links{ display:none; } }
 
+  /* hero entrance */
+  @keyframes rise{ from{ opacity:0; transform:translateY(34px); } to{ opacity:1; transform:none; } }
   .hero{ min-height:100svh; display:flex; flex-direction:column; justify-content:flex-end; padding:0 6vw 8vh; position:relative; }
   .hero-bg{ position:absolute; inset:0; background:radial-gradient(ellipse at 30% 20%,#23201c 0%,transparent 55%),linear-gradient(180deg,#100f0e 0%,#0a0a09 100%); }
   .hero-content{ position:relative; z-index:2; }
-  .hero-eyebrow{ font-size:.85rem; color:var(--clay); margin-bottom:18px; display:flex; align-items:center; gap:14px; }
-  .hero-eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--clay); }
-  .hero h1{ font-size:clamp(3rem,9vw,7.5rem); line-height:.95; max-width:16ch; }
-  .hero-sub{ margin-top:28px; max-width:38ch; font-size:1.1rem; color:var(--paper-dim); }
-  .hero-meta{ margin-top:56px; display:flex; gap:48px; flex-wrap:wrap; font-size:.85rem; color:var(--paper-dim); border-top:1px solid var(--line); padding-top:24px; }
+  .hero-eyebrow{ font-size:.85rem; color:var(--clay); margin-bottom:18px; display:flex; align-items:center; gap:14px; animation:rise .9s var(--ease) both; }
+  .hero-eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--clay); animation:pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:.4; transform:scale(.75)} }
+  .hero h1{ font-size:clamp(3rem,9vw,7.5rem); line-height:.95; max-width:16ch; animation:rise .9s var(--ease) .1s both; }
+  .hero-sub{ margin-top:28px; max-width:38ch; font-size:1.1rem; color:var(--paper-dim); animation:rise .9s var(--ease) .22s both; }
+  .hero-meta{ margin-top:56px; display:flex; gap:48px; flex-wrap:wrap; font-size:.85rem; color:var(--paper-dim); border-top:1px solid var(--line); padding-top:24px; animation:rise .9s var(--ease) .34s both; }
   .hero-meta strong{ display:block; color:var(--paper); font-weight:400; font-family:'Fraunces',serif; font-size:1.1rem; margin-bottom:4px; }
+
+  /* scroll reveal */
+  .reveal{ opacity:0; transform:translateY(30px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
+  .reveal.in{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce){ .reveal{ opacity:1; transform:none; } }
 
   section{ padding:14vh 6vw; }
   .section-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:6vh; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:24px; }
   .section-head h2{ font-size:clamp(2rem,4vw,3rem); }
   .section-head p{ max-width:34ch; color:var(--paper-dim); font-size:.95rem; }
 
-  /* place jump-nav */
-  .place-nav{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:7vh; }
-  .place-nav a{ text-decoration:none; font-size:.8rem; color:var(--paper-dim); border:1px solid var(--line); padding:8px 16px; border-radius:100px; transition:border-color .2s,color .2s; }
+  /* place jump-nav — sticky glass bar */
+  .place-nav{ position:sticky; top:64px; z-index:60; display:flex; gap:10px; flex-wrap:wrap; margin-bottom:7vh; padding:10px; background:rgba(15,15,14,.72); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); border:1px solid rgba(42,42,40,.6); border-radius:100px; width:fit-content; max-width:100%; }
+  .place-nav a{ text-decoration:none; font-size:.8rem; color:var(--paper-dim); border:1px solid var(--line); padding:8px 16px; border-radius:100px; transition:border-color .2s,color .2s,background .2s; white-space:nowrap; }
   .place-nav a:hover, .place-nav a.active{ border-color:var(--clay); color:var(--clay); }
+  .place-nav a.active{ background:rgba(185,138,90,.1); }
 
-  .place-block{ margin-bottom:11vh; scroll-margin-top:110px; }
+  .place-block{ margin-bottom:11vh; scroll-margin-top:140px; content-visibility:auto; contain-intrinsic-size:auto 700px; }
   .place-block:last-child{ margin-bottom:0; }
   .place-title{ display:flex; align-items:baseline; gap:18px; flex-wrap:wrap; margin-bottom:2.2vh; }
   .place-title h3{ font-size:clamp(1.5rem,3vw,2.1rem); }
   .place-title .meta{ font-size:.8rem; color:var(--paper-dim); }
 
-  .gallery{ display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); grid-auto-rows:280px; grid-auto-flow:dense; gap:18px; perspective:1400px; }
-  .frame{ position:relative; background:var(--bg-raised); border-radius:6px; overflow:hidden; cursor:pointer; transform-style:preserve-3d; transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s ease; grid-column:span 1; grid-row:span 1; box-shadow:0 0 0 1px var(--line), 0 14px 30px -18px rgba(0,0,0,.55); }
+  .gallery{ display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); grid-auto-rows:280px; grid-auto-flow:dense; gap:18px; }
+  .frame{ position:relative; background:linear-gradient(110deg,var(--bg-raised) 30%,#1d1d1b 45%,var(--bg-raised) 60%); background-size:200% 100%; animation:shimmer 1.6s linear infinite; border-radius:6px; overflow:hidden; cursor:pointer; box-shadow:0 0 0 1px var(--line); grid-column:span 1; grid-row:span 1; }
+  @keyframes shimmer{ from{background-position:180% 0} to{background-position:-80% 0} }
+  @media (prefers-reduced-motion:reduce){ .frame{ animation:none; } }
   .frame.landscape{ grid-column:span 2; }
   .frame.portrait{ grid-row:span 2; }
   .frame.feature{ grid-column:span 2; grid-row:span 2; }
   .frame img, .frame video{ width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; user-select:none; }
-  .frame:hover{ transform:translateY(-6px) rotateX(4deg) rotateY(-4deg) scale(1.03); box-shadow:0 0 0 1.5px var(--clay), 0 30px 60px -20px rgba(0,0,0,.65); z-index:2; }
+  .frame img{ opacity:0; transition:opacity .6s var(--ease); }
+  .frame img.loaded{ opacity:1; }
   .frame .play-badge{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:2.2rem; color:var(--paper); text-shadow:0 2px 12px rgba(0,0,0,.6); pointer-events:none; }
-  .frame .place-tag{ position:absolute; top:10px; left:10px; background:rgba(15,15,14,.72); backdrop-filter:blur(4px); color:var(--paper); font-size:.68rem; letter-spacing:.03em; padding:4px 10px; border-radius:100px; border:1px solid rgba(238,233,223,.15); opacity:0; transition:opacity .25s ease; }
-  .frame:hover .place-tag{ opacity:1; }
+  .frame .place-tag{ position:absolute; top:10px; left:10px; background:rgba(15,15,14,.72); color:var(--paper); font-size:.68rem; letter-spacing:.03em; padding:4px 10px; border-radius:100px; border:1px solid rgba(238,233,223,.15); opacity:0; transition:opacity .25s ease; }
+  @media (hover:hover) and (pointer:fine){
+    .frame{ transition:transform .25s var(--ease), box-shadow .25s var(--ease); animation:none; }
+    .frame img{ transition:opacity .6s var(--ease), transform .6s var(--ease); }
+    .frame:hover{ transform:translateY(-5px) scale(1.02); box-shadow:0 0 0 1.5px var(--clay), 0 20px 40px -18px rgba(0,0,0,.6); z-index:2; }
+    .frame:hover img{ transform:scale(1.04); }
+    .frame:hover .place-tag{ opacity:1; }
+    .frame:hover .cap{ opacity:1; }
+  }
+  @media (hover:none){
+    .frame{ animation:none; }
+    .frame img{ opacity:1; }
+    .frame .cap{ opacity:1; background:linear-gradient(0deg,rgba(0,0,0,.7) 0%,transparent 100%); }
+  }
   .frame .cap{ position:absolute; left:0; right:0; bottom:0; padding:22px 16px 14px; background:linear-gradient(0deg,rgba(0,0,0,.82) 0%,rgba(0,0,0,.35) 55%,transparent 100%); font-size:.82rem; color:var(--paper); font-weight:400; opacity:0; transition:opacity .3s ease; letter-spacing:.01em; }
-  .frame:hover .cap{ opacity:1; }
   @media (max-width:900px){ .gallery{ grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); grid-auto-rows:220px; } }
-  @media (max-width:600px){ .gallery{ grid-template-columns:repeat(2, 1fr); grid-auto-rows:170px; } .frame.feature{ grid-column:span 2; } }
+  @media (max-width:600px){ .gallery{ grid-template-columns:repeat(2, 1fr); grid-auto-rows:170px; } .frame.feature{ grid-column:span 2; } .place-nav{ top:56px; border-radius:16px; } }
 
   .empty-state{ color:var(--paper-dim); font-size:.95rem; border:1px dashed var(--line); padding:40px; text-align:center; }
 
   .about{ display:grid; grid-template-columns:0.9fr 1.1fr; gap:8vw; align-items:start; }
-  .about-portrait{ aspect-ratio:3/4; background:var(--bg-raised); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px; color:var(--paper-dim); text-align:center; padding:20px; overflow:hidden; }
-  .about-portrait img{ width:100%; height:100%; object-fit:cover; pointer-events:none; }
+  .about-portrait{ aspect-ratio:3/4; background:var(--bg-raised); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px; color:var(--paper-dim); text-align:center; padding:20px; overflow:hidden; position:relative; }
+  .about-portrait img{ width:100%; height:100%; object-fit:cover; pointer-events:none; opacity:0; transition:opacity .8s var(--ease); }
+  .about-portrait img.loaded{ opacity:1; }
   .about-text p{ margin-bottom:1.4em; color:var(--paper-dim); max-width:56ch; }
   .about-text p:first-of-type{ color:var(--paper); font-size:1.2rem; font-family:'Fraunces',serif; }
   .skills{ display:flex; flex-wrap:wrap; gap:10px; margin-top:32px; }
-  .skills span{ border:1px solid var(--line); padding:8px 16px; border-radius:100px; font-size:.82rem; color:var(--paper-dim); }
+  .skills span{ border:1px solid var(--line); padding:8px 16px; border-radius:100px; font-size:.82rem; color:var(--paper-dim); transition:border-color .2s,color .2s; }
+  .skills span:hover{ border-color:var(--clay); color:var(--clay); }
   @media (max-width:800px){ .about{ grid-template-columns:1fr; } .about-portrait{ max-width:280px; } }
 
-  .contact{ display:flex; flex-direction:column; align-items:flex-start; }
   .contact h2{ font-size:clamp(2.2rem,6vw,4.5rem); max-width:14ch; margin-bottom:40px; }
   .contact-row{ display:flex; gap:60px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:32px; width:100%; }
   .contact-col span{ display:block; font-size:.78rem; color:var(--paper-dim); margin-bottom:8px; }
-  .contact-col a{ font-size:1.05rem; text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:2px; }
+  .contact-col a{ font-size:1.05rem; text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:2px; transition:border-color .2s,color .2s; }
   .contact-col a:hover{ border-color:var(--clay); color:var(--clay); }
 
   footer{ padding:28px 6vw 40px; display:flex; justify-content:space-between; font-size:.78rem; color:var(--paper-dim); flex-wrap:wrap; gap:10px; }
@@ -94,11 +140,11 @@
   footer a:hover{ opacity:1; }
 
   /* Lightbox with 3D glance */
-  .lightbox{ position:fixed; inset:0; background:rgba(8,8,7,.94); display:none; align-items:center; justify-content:center; z-index:200; padding:5vw; perspective:1600px; }
+  .lightbox{ position:fixed; inset:0; background:rgba(8,8,7,.94); display:none; align-items:center; justify-content:center; z-index:200; padding:5vw; perspective:1600px; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
   .lightbox.open{ display:flex; }
   .lightbox-inner{ max-width:900px; width:100%; text-align:center; }
   .lightbox-stage{ aspect-ratio:4/5; max-height:84vh; margin:0 auto; transform-style:preserve-3d; }
-  .lightbox-stage .box{ width:100%; height:100%; background:var(--bg-raised); border-radius:8px; box-shadow:0 0 0 1px var(--line), 0 40px 80px -30px rgba(0,0,0,.7); overflow:hidden; transform-style:preserve-3d; transform:rotateY(-90deg) scale(.9); opacity:0; transition:transform .5s cubic-bezier(.2,.8,.2,1), opacity .4s ease; will-change:transform; }
+  .lightbox-stage .box{ width:100%; height:100%; background:var(--bg-raised); border-radius:8px; box-shadow:0 0 0 1px var(--line), 0 40px 80px -30px rgba(0,0,0,.7); overflow:hidden; transform-style:preserve-3d; transform:rotateY(-90deg) scale(.9); opacity:0; transition:transform .5s var(--ease), opacity .4s ease; will-change:transform; }
   .lightbox.open .lightbox-stage .box{ transform:rotateY(0deg) rotateX(0deg) scale(1); opacity:1; }
   .lightbox-stage .box img{ width:100%; height:100%; object-fit:contain; pointer-events:none; user-select:none; -webkit-user-drag:none; }
   .lightbox-cap{ margin-top:20px; }
@@ -106,16 +152,19 @@
   .lightbox-cap .story{ margin-top:8px; color:var(--paper-dim); font-size:.9rem; max-width:56ch; margin-left:auto; margin-right:auto; }
   .lightbox-cap .date{ margin-top:8px; color:var(--clay); font-size:.75rem; letter-spacing:.03em; }
   .lightbox-close{ position:absolute; top:28px; right:6vw; font-size:.9rem; background:none; border:none; color:var(--paper); cursor:pointer; font-family:'Work Sans',sans-serif; }
-  .lightbox-nav{ position:absolute; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--paper-dim); font-size:1.8rem; cursor:pointer; padding:10px 16px; }
+  .lightbox-nav{ position:absolute; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--paper-dim); font-size:1.8rem; cursor:pointer; padding:10px 16px; transition:color .2s; }
   .lightbox-nav:hover{ color:var(--paper); }
   .lightbox-prev{ left:2vw; }
   .lightbox-next{ right:2vw; }
+  .lightbox-count{ position:absolute; top:32px; left:6vw; font-size:.8rem; color:var(--paper-dim); letter-spacing:.05em; }
   @media (max-width:640px){ .lightbox-nav{ display:none; } }
 </style>
 </head>
 <body>
 
-<nav>
+<div class="grain" aria-hidden="true"></div>
+
+<nav id="mainNav">
   <div class="nav-name">Al Nafis Fuad Shuvo</div>
   <ul class="nav-links">
     <li><a href="#work">Work</a></li>
@@ -124,6 +173,7 @@
   </ul>
 </nav>
 
+<main>
 <header class="hero">
   <div class="hero-bg"></div>
   <div class="hero-content">
@@ -139,24 +189,24 @@
 </header>
 
 <section id="work">
-  <div class="section-head">
+  <div class="section-head reveal">
     <h2>Selected work</h2>
     <p>A running trail of places across Austria — grouped by where each frame was taken.</p>
   </div>
-  <nav class="place-nav" id="placeNav"></nav>
+  <nav class="place-nav reveal" id="placeNav" aria-label="Places"></nav>
   <div id="gallery-root"></div>
 </section>
 
 <section id="about">
-  <div class="section-head"><h2>About</h2></div>
+  <div class="section-head reveal"><h2>About</h2></div>
   <div class="about">
-    <div class="about-portrait" id="portrait">
+    <div class="about-portrait reveal" id="portrait">
       <div id="portraitPlaceholder" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
         <div style="font-family:'Fraunces',serif;font-size:1.6rem;color:var(--line);">Photo</div>
         <div style="font-size:.75rem;">Add your portrait via the admin page</div>
       </div>
     </div>
-    <div class="about-text">
+    <div class="about-text reveal">
       <p id="aboutP1">I'm Al Nafis Fuad Shuvo, an international student from Bangladesh, currently based in Vienna, Austria.</p>
       <p id="aboutP2">I'm pursuing an MSc in Digital Economy at WU Wien. Photography is what I do between lectures, commutes, and trips around the country — street scenes, architecture, and the quiet corners of Austria I keep finding as I travel.</p>
       <p id="aboutP3">Every photo below is tied to the place I took it — this page grows as I go.</p>
@@ -171,23 +221,25 @@
 </section>
 
 <section id="contact">
-  <h2>Let's make an image worth keeping.</h2>
-  <div class="contact-row" id="contactRow">
+  <h2 class="reveal">Let's make an image worth keeping.</h2>
+  <div class="contact-row reveal" id="contactRow">
     <div class="contact-col"><span>Email</span><a id="contactEmail" href="mailto:shuvonafis66@gmail.com">shuvonafis66@gmail.com</a></div>
     <div class="contact-col"><span>Instagram</span><a id="contactInstagram" href="https://instagram.com/al_nafis_fuad_shuvo" target="_blank" rel="noopener">@al_nafis_fuad_shuvo</a></div>
     <div class="contact-col"><span>LinkedIn</span><a id="contactLinkedin" href="https://linkedin.com/in/nafisfuadshuvo" target="_blank" rel="noopener">nafisfuadshuvo</a></div>
   </div>
 </section>
+</main>
 
 <footer>
   <span>© <span id="year"></span> Al Nafis Fuad Shuvo</span>
   <span>Built for GitHub Pages</span>
 </footer>
 
-<div class="lightbox" id="lightbox">
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <span class="lightbox-count" id="lightboxCount"></span>
   <button class="lightbox-close" id="lightboxClose">Close ✕</button>
-  <button class="lightbox-nav lightbox-prev" id="prevBtn" aria-label="Previous">‹</button>
-  <button class="lightbox-nav lightbox-next" id="nextBtn" aria-label="Next">›</button>
+  <button class="lightbox-nav lightbox-prev" id="prevBtn" aria-label="Previous photo">‹</button>
+  <button class="lightbox-nav lightbox-next" id="nextBtn" aria-label="Next photo">›</button>
   <div class="lightbox-inner">
     <div class="lightbox-stage" id="stage"><div class="box" id="box"></div></div>
     <div class="lightbox-cap">
@@ -205,6 +257,18 @@ document.getElementById('year').textContent = new Date().getFullYear();
 // nothing on the open web can fully stop a determined download, e.g. screenshots)
 document.addEventListener('contextmenu', e => { if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') e.preventDefault(); });
 document.addEventListener('dragstart', e => { if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') e.preventDefault(); });
+
+// nav condenses after scrolling past the hero
+const mainNav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  mainNav.classList.toggle('scrolled', window.scrollY > window.innerHeight * 0.7);
+}, { passive:true });
+
+// fade-in on scroll
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(en => { if(en.isIntersecting){ en.target.classList.add('in'); revealObserver.unobserve(en.target); } });
+}, { rootMargin:'0px 0px -8% 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 async function loadSiteContent(){
   try{
@@ -227,7 +291,14 @@ async function loadSiteContent(){
 
     if(s.portraitImage){
       const ph = document.getElementById('portraitPlaceholder');
-      if(ph) ph.outerHTML = `<img src="${s.portraitImage}" alt="Portrait" style="pointer-events:none;">`;
+      if(ph){
+        const img = new Image();
+        img.alt = 'Portrait of Al Nafis Fuad Shuvo';
+        img.decoding = 'async';
+        img.onload = () => img.classList.add('loaded');
+        img.src = s.portraitImage;
+        ph.replaceWith(img);
+      }
     }
 
     if(Array.isArray(s.extraLinks) && s.extraLinks.length){
@@ -280,7 +351,7 @@ const lazyVideoObserver = new IntersectionObserver((entries) => {
       vid.pause();
     }
   });
-}, { rootMargin: '250px 0px' });
+}, { rootMargin: '80px 0px' });
 
 function render(){
   const root = document.getElementById('gallery-root');
@@ -299,6 +370,7 @@ function render(){
     const a = document.createElement('a');
     a.href = '#' + slug(g.place);
     a.textContent = g.place;
+    a.dataset.place = slug(g.place);
     nav.appendChild(a);
   });
 
@@ -321,40 +393,68 @@ function render(){
     g.items.forEach((p, idx) => {
       const frame = document.createElement('div');
       frame.className = 'frame';
-      if(idx === 0) frame.classList.add('feature');
+      const isFeature = idx === 0;
+      if(isFeature) frame.classList.add('feature');
       const isVideo = p.type === 'video';
+      // Grid loads the light thumbnail; high-DPI screens upgrade to the full
+      // master automatically via srcset. The feature tile always gets the full file.
+      const thumb = p.thumb || p.image;
+      const src = isFeature ? (p.image || thumb) : thumb;
+      const srcset = (!isVideo && p.thumb) ? ` srcset="${p.thumb} 1x, ${p.image} 2x"` : '';
+      const loadAttr = isFeature ? 'fetchpriority="high"' : 'loading="lazy"';
       const mediaTag = isVideo
-        ? `<video data-src="${p.video}" muted loop playsinline preload="none" controlsList="nodownload noremoteplayback" disablePictureInPicture></video>`
-        : `<img src="${p.image}" alt="${(p.story||g.place).replace(/"/g,'&quot;')}" loading="lazy">`;
+        ? `<video data-src="${p.video}" muted loop playsinline preload="none" controlsList="nodownload noremoteplayback" disablePictureInPicture></video><span class="play-badge">▶</span>`
+        : `<img src="${src}"${srcset} ${loadAttr} decoding="async" alt="${(p.story||g.place).replace(/"/g,'&quot;')}">`;
       frame.innerHTML = `${mediaTag}<span class="place-tag">${g.place}</span><div class="cap">${p.story ? p.story.slice(0,80) : g.place}</div>`;
       if(isVideo){
         lazyVideoObserver.observe(frame.querySelector('video'));
-      }else if(idx !== 0){
-        // size the tile to the photo's real shape so landscape/portrait photos
-        // don't get force-cropped into the wrong box
+      }else{
         const img = frame.querySelector('img');
         const applyShape = () => {
-          const ratio = img.naturalWidth / img.naturalHeight;
-          if(ratio > 1.25) frame.classList.add('landscape');
-          else if(ratio < 0.8) frame.classList.add('portrait');
+          img.classList.add('loaded');
+          if(!isFeature){
+            const ratio = img.naturalWidth / img.naturalHeight;
+            if(ratio > 1.25) frame.classList.add('landscape');
+            else if(ratio < 0.8) frame.classList.add('portrait');
+          }
         };
-        if(img.complete) applyShape(); else img.addEventListener('load', applyShape);
+        if(img.complete && img.naturalWidth) applyShape();
+        else img.addEventListener('load', applyShape, { once:true });
       }
       frame.addEventListener('click', () => openLightbox(photos.indexOf(p)));
       gal.appendChild(frame);
     });
     root.appendChild(block);
   });
+
+  // highlight the place-nav link of the section currently in view
+  const navLinks = [...nav.querySelectorAll('a')];
+  const blockObserver = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if(en.isIntersecting){
+        navLinks.forEach(a => a.classList.toggle('active', a.dataset.place === en.target.id));
+      }
+    });
+  }, { rootMargin:'-35% 0px -55% 0px' });
+  root.querySelectorAll('.place-block').forEach(b => blockObserver.observe(b));
 }
 
 const lightbox = document.getElementById('lightbox');
 const box = document.getElementById('box');
 const stage = document.getElementById('stage');
 
+function preloadAround(i){
+  [i+1, i-1].forEach(j => {
+    const p = photos[(j + photos.length) % photos.length];
+    if(p && p.type !== 'video' && p.image){ const im = new Image(); im.src = p.image; }
+  });
+}
+
 function openLightbox(index){
   currentIndex = index;
   showPhoto();
   lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
 function showPhoto(){
@@ -362,16 +462,19 @@ function showPhoto(){
   if(!p) return;
   box.innerHTML = (p.type === 'video')
     ? `<video src="${p.video}" controls autoplay playsinline controlsList="nodownload noremoteplayback" disablePictureInPicture></video>`
-    : `<img src="${p.image}" alt="">`;
+    : `<img src="${p.image}" alt="${(p.story||p.place||'').replace(/"/g,'&quot;')}">`;
   document.getElementById('capPlace').textContent = p.place || '';
   document.getElementById('capStory').textContent = p.story || '';
   document.getElementById('capDate').textContent = p.date || '';
+  document.getElementById('lightboxCount').textContent = (currentIndex + 1) + ' / ' + photos.length;
+  preloadAround(currentIndex);
 }
 
 function closeLightbox(){
   const v = box.querySelector('video');
   if(v) v.pause();
   lightbox.classList.remove('open');
+  document.body.style.overflow = '';
 }
 document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
 lightbox.addEventListener('click', e => { if(e.target === lightbox) closeLightbox(); });
@@ -387,6 +490,16 @@ function step(dir){
   currentIndex = (currentIndex + dir + photos.length) % photos.length;
   showPhoto();
 }
+
+// swipe navigation inside the lightbox (touch devices)
+let touchX = null;
+lightbox.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive:true });
+lightbox.addEventListener('touchend', e => {
+  if(touchX === null) return;
+  const dx = e.changedTouches[0].clientX - touchX;
+  if(Math.abs(dx) > 60) step(dx < 0 ? 1 : -1);
+  touchX = null;
+}, { passive:true });
 
 // subtle 3D "glance" tilt following the pointer, while open
 stage.addEventListener('mousemove', e => {

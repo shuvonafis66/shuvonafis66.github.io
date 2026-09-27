@@ -59,8 +59,6 @@
   .frame{ position:relative; background:var(--bg-raised); border-radius:6px; overflow:hidden; aspect-ratio:4/5; box-shadow:0 0 0 1px var(--line); transition:box-shadow .2s ease; }
   .frame:hover{ box-shadow:0 0 0 1.5px var(--clay); }
   .frame img, .frame video{ width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; user-select:none; }
-  .frame .del{ position:absolute; top:8px; right:8px; background:rgba(15,15,14,.85); color:var(--err); border:1px solid var(--err); border-radius:100px; padding:5px 11px; font-size:.7rem; cursor:pointer; opacity:0; transition:opacity .2s; }
-  .frame:hover .del{ opacity:1; }
   .frame .cap{ position:absolute; left:0; right:0; bottom:0; padding:12px 14px; background:linear-gradient(0deg,rgba(0,0,0,.8),transparent); font-size:.75rem; }
 
   .add-frame{ border:1px dashed var(--line); aspect-ratio:4/5; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--paper-dim); font-size:.85rem; text-align:center; padding:14px; }
@@ -291,24 +289,39 @@ async function loadJsonFile(path, fallback){
 }
 
 // Keeps photos looking sharp on any screen while capping the master file size.
+// Every photo is exported TWICE from a single canvas draw:
+//   • full  — 2400px master, used by the lightbox and high-DPI (Retina) screens
+//   • thumb — 1200px preview, used by the grid so pages load fast
 // NOTE: since the repo is public, a determined visitor can still find an image's
 // direct URL via view-source or the browser's network tab — this is not true DRM,
 // just a strong display copy that isn't your raw camera original.
-function resizeImage(file, maxDim = 4200, quality = 0.95){
+function processImage(file, fullDim = 2400, fullQ = 0.86, thumbDim = 1200, thumbQ = 0.8){
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
     img.onload = () => {
-      let { width, height } = img;
-      if(width > maxDim || height > maxDim){
-        const scale = maxDim / Math.max(width, height);
-        width = Math.round(width*scale); height = Math.round(height*scale);
-      }
+      const scale = Math.min(1, fullDim / Math.max(img.width, img.height));
+      const fw = Math.max(1, Math.round(img.width * scale));
+      const fh = Math.max(1, Math.round(img.height * scale));
       const canvas = document.createElement('canvas');
-      canvas.width = width; canvas.height = height;
-      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      canvas.width = fw; canvas.height = fh;
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, fw, fh);
+      const full = canvas.toDataURL('image/jpeg', fullQ).split(',')[1];
+
+      const tscale = Math.min(1, thumbDim / Math.max(fw, fh));
+      const tw = Math.max(1, Math.round(fw * tscale));
+      const th = Math.max(1, Math.round(fh * tscale));
+      const tc = document.createElement('canvas');
+      tc.width = tw; tc.height = th;
+      const tctx = tc.getContext('2d');
+      tctx.imageSmoothingQuality = 'high';
+      tctx.drawImage(canvas, 0, 0, tw, th);
+      const thumb = tc.toDataURL('image/jpeg', thumbQ).split(',')[1];
+
       URL.revokeObjectURL(url);
-      resolve(canvas.toDataURL('image/jpeg', quality).split(',')[1]);
+      resolve({ full, thumb });
     };
     img.onerror = reject;
     img.src = url;
@@ -456,7 +469,7 @@ function renderGallery(){
       const isVideo = p.type === 'video';
       const mediaTag = isVideo
         ? `<video src="${p.video}" muted loop playsinline></video><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.8rem;pointer-events:none;">▶</div>`
-        : `<img src="${p.image}">`;
+        : `<img src="${p.thumb || p.image}" loading="lazy">`; // grid preview uses the light thumbnail
       frame.innerHTML = `${mediaTag}<div style="position:absolute;top:8px;right:8px;display:flex;gap:6px;"><button class="edit" style="background:rgba(15,15,14,.85);color:var(--clay);border:1px solid var(--clay);border-radius:100px;padding:5px 11px;font-size:.7rem;cursor:pointer;opacity:0;transition:opacity .2s;">Edit</button><button class="del" style="background:rgba(15,15,14,.85);color:var(--err);border:1px solid var(--err);border-radius:100px;padding:5px 11px;font-size:.7rem;cursor:pointer;opacity:0;transition:opacity .2s;">Delete</button></div><div class="cap">${p.story ? p.story.slice(0,70) : ''}</div>`;
       frame.addEventListener('mouseenter', () => { frame.querySelectorAll('.edit,.del').forEach(b=>b.style.opacity=1); if(isVideo) frame.querySelector('video').play().catch(()=>{}); });
       frame.addEventListener('mouseleave', () => { frame.querySelectorAll('.edit,.del').forEach(b=>b.style.opacity=0); if(isVideo){ const v=frame.querySelector('video'); v.pause(); v.currentTime=0; } });
@@ -498,26 +511,33 @@ $('npSubmit').addEventListener('click', async () => {
       const isVideo = file.type.startsWith('video/');
       $('npMsg').className='msg ok'; $('npMsg').textContent = `Uploading ${i+1} of ${files.length}…`;
 
-      if(isVideo){
-        file = await compressVideoIfNeeded(file, $('npMsg'));
-      }
-
-      const ext = isVideo ? (file.name.split('.').pop() || 'webm') : 'jpg';
-      const safeName = `${slug(place)}-${Date.now()}-${i}.${ext}`;
-      const mediaPath = `assets/photos/${safeName}`;
-      const base64 = isVideo ? await fileToBase64Raw(file) : await resizeImage(file);
-      await putFile(mediaPath, base64, `Add ${isVideo ? 'video' : 'photo'}: ${place}`);
-
-      newEntries.push({
+      const base = `${slug(place)}-${Date.now()}-${i}`;
+      let entry = {
         id: 'p' + Date.now() + '-' + i,
         place,
         region: $('npRegion').value.trim(),
         date: $('npDate').value,
         story: $('npStory').value.trim(),
-        type: isVideo ? 'video' : 'photo',
-        image: isVideo ? undefined : mediaPath,
-        video: isVideo ? mediaPath : undefined
-      });
+        type: isVideo ? 'video' : 'photo'
+      };
+
+      if(isVideo){
+        file = await compressVideoIfNeeded(file, $('npMsg'));
+        const ext = file.name.split('.').pop() || 'webm';
+        const mediaPath = `assets/photos/${base}.${ext}`;
+        await putFile(mediaPath, await fileToBase64Raw(file), `Add video: ${place}`);
+        entry.video = mediaPath;
+      }else{
+        const { full, thumb } = await processImage(file);
+        const fullPath = `assets/photos/${base}.jpg`;
+        const thumbPath = `assets/photos/${base}-thumb.jpg`;
+        await putFile(fullPath, full, `Add photo (master): ${place}`);
+        $('npMsg').textContent = `Uploading ${i+1} of ${files.length} (preview)…`;
+        await putFile(thumbPath, thumb, `Add photo (preview): ${place}`);
+        entry.image = fullPath;
+        entry.thumb = thumbPath;
+      }
+      newEntries.push(entry);
     }
 
     $('npMsg').textContent = 'Saving list…';
@@ -565,17 +585,28 @@ $('epSubmit').addEventListener('click', async () => {
 
     let file = $('epFile').files[0];
     if(file){
-      let isVideo = file.type.startsWith('video/');
+      const isVideo = file.type.startsWith('video/');
+      const base = `${slug(place)}-${Date.now()}`;
       if(isVideo){
         file = await compressVideoIfNeeded(file, $('epMsg'));
+        const ext = file.name.split('.').pop() || 'webm';
+        const mediaPath = `assets/photos/${base}.${ext}`;
+        await putFile(mediaPath, await fileToBase64Raw(file), `Replace video: ${place}`);
+        list[idx].type = 'video';
+        list[idx].image = undefined;
+        list[idx].thumb = undefined;
+        list[idx].video = mediaPath;
+      }else{
+        const { full, thumb } = await processImage(file);
+        const fullPath = `assets/photos/${base}.jpg`;
+        const thumbPath = `assets/photos/${base}-thumb.jpg`;
+        await putFile(fullPath, full, `Replace photo (master): ${place}`);
+        await putFile(thumbPath, thumb, `Replace photo (preview): ${place}`);
+        list[idx].type = 'photo';
+        list[idx].image = fullPath;
+        list[idx].thumb = thumbPath;
+        list[idx].video = undefined;
       }
-      const ext = isVideo ? (file.name.split('.').pop() || 'webm') : 'jpg';
-      const mediaPath = `assets/photos/${slug(place)}-${Date.now()}.${ext}`;
-      const base64 = isVideo ? await fileToBase64Raw(file) : await resizeImage(file);
-      await putFile(mediaPath, base64, `Replace ${isVideo ? 'video' : 'photo'}: ${place}`);
-      list[idx].type = isVideo ? 'video' : 'photo';
-      list[idx].image = isVideo ? undefined : mediaPath;
-      list[idx].video = isVideo ? mediaPath : undefined;
     }
     list[idx].place = place;
     list[idx].date = $('epDate').value;
@@ -603,10 +634,10 @@ $('portraitUploadBtn').addEventListener('click', async () => {
   $('portraitUploadBtn').disabled = true;
   $('portraitMsg').className='msg ok'; $('portraitMsg').textContent='Uploading…';
   try{
-    const base64 = await resizeImage(file, 1600, 0.92);
+    const { full } = await processImage(file, 1600, 0.92, 800, 0.8);
     const imagePath = 'assets/photos/profile.jpg';
     const existing = await getFile(imagePath);
-    await putFile(imagePath, base64, 'Update portrait', existing ? existing.sha : null);
+    await putFile(imagePath, full, 'Update portrait', existing ? existing.sha : null);
     siteData.portraitImage = imagePath;
     showPortraitPreview(imagePath);
     $('portraitMsg').textContent = 'Uploaded ✓ — press "Save text" below to publish.';
