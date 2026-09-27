@@ -329,7 +329,7 @@ function fileToBase64Raw(file){
 // If a video is too big for GitHub's upload limit, re-encode it in the browser at a
 // lower bitrate while keeping the exact same width/height (no downscaling) — so it
 // still looks like the original resolution, just compressed harder, like any web video.
-const VIDEO_SAFE_MB = 30; // stays comfortably under GitHub's ~100MB API limit after base64 overhead
+const VIDEO_SAFE_MB = 55; // more bitrate headroom than before = smoother, less choppy compressed output
 
 function compressVideoIfNeeded(file, statusEl){
   if(file.size <= VIDEO_SAFE_MB * 1024 * 1024) return Promise.resolve(file);
@@ -354,7 +354,7 @@ function compressVideoIfNeeded(file, statusEl){
       const mimeType = mimeCandidates.find(t => MediaRecorder.isTypeSupported(t)) || 'video/webm';
 
       let stream;
-      try{ stream = video.captureStream(); }catch(e){ resolve(file); return; }
+      try{ stream = video.captureStream(30); }catch(e){ try{ stream = video.captureStream(); }catch(e2){ resolve(file); return; } }
 
       let recorder;
       try{ recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond }); }
@@ -373,7 +373,7 @@ function compressVideoIfNeeded(file, statusEl){
       video.onended = () => { try{ recorder.stop(); }catch(e){} };
       video.play().then(() => {
         if(statusEl) statusEl.textContent = `Compressing video (~${Math.ceil(duration)}s, please wait)…`;
-        recorder.start();
+        recorder.start(1000);
       }).catch(() => resolve(file));
     };
     video.onerror = () => resolve(file);
