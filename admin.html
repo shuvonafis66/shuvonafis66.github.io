@@ -7,94 +7,54 @@
 <title>Al Nafis Fuad Shuvo — Photography (edit mode)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root{ --bg:#0f0f0e; --bg-raised:#171716; --line:#2a2a28; --paper:#eee9df; --paper-dim:#9c968a; --clay:#b98a5a; --focus:#d7b98a; --ok:#7fae7f; --err:#c97a6a; }
+  :root{ --bg:#0f0f0e; --bg-raised:#171716; --line:#2a2a28; --paper:#eee9df; --paper-dim:#9c968a; --clay:#b98a5a; --ok:#7fae7f; --err:#c97a6a; }
   *{ margin:0; padding:0; box-sizing:border-box; }
-  body{ background:var(--bg); color:var(--paper); font-family:'Work Sans',sans-serif; font-weight:300; line-height:1.6; overflow-x:hidden; }
+  body{ background:var(--bg); color:var(--paper); font-family:'Work Sans',sans-serif; font-weight:300; line-height:1.6; }
   a{ color:inherit; }
-  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:400; letter-spacing:-0.01em; }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:400; }
 
   #lockScreen{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:6vw; }
-  .lock-card{ max-width:420px; width:100%; background:var(--bg-raised); border:1px solid var(--line); padding:36px; }
-  .lock-card h1{ font-size:1.5rem; margin-bottom:6px; }
-  .lock-card p{ color:var(--paper-dim); font-size:.85rem; margin-bottom:26px; }
-  .lock-card label{ display:block; font-size:.78rem; color:var(--paper-dim); margin:14px 0 6px; }
+  .lock-card{ max-width:420px; width:100%; background:var(--bg-raised); border:1px solid var(--line); padding:34px; }
+  .lock-card h1{ font-size:1.4rem; margin-bottom:6px; }
+  .lock-card p{ color:var(--paper-dim); font-size:.83rem; margin-bottom:22px; }
+  .lock-card label{ display:block; font-size:.76rem; color:var(--paper-dim); margin:12px 0 5px; }
   .lock-card label:first-of-type{ margin-top:0; }
-  .lock-card input{ width:100%; background:var(--bg); border:1px solid var(--line); color:var(--paper); padding:11px 13px; font-family:'Work Sans',sans-serif; font-size:.9rem; border-radius:2px; }
-  .lock-card input:focus{ outline:none; border-color:var(--clay); }
-  .lock-card button{ margin-top:22px; width:100%; background:var(--clay); color:#0f0f0e; border:none; padding:12px; font-size:.9rem; font-weight:500; cursor:pointer; border-radius:2px; }
-  .lock-msg{ margin-top:14px; font-size:.8rem; display:none; }
-  .lock-msg.err{ display:block; color:var(--err); }
+  .lock-card input{ width:100%; background:var(--bg); border:1px solid var(--line); color:var(--paper); padding:10px 12px; font-family:'Work Sans',sans-serif; font-size:.88rem; border-radius:2px; }
+  .lock-card button{ margin-top:20px; width:100%; background:var(--clay); color:#0f0f0e; border:none; padding:11px; font-size:.88rem; font-weight:500; cursor:pointer; border-radius:2px; }
+  .lock-msg{ margin-top:12px; font-size:.78rem; color:var(--err); display:none; }
 
-  #appRoot{ display:none; padding-bottom:110px; }
-  [contenteditable="true"]{ outline: 1px dashed transparent; border-radius:2px; transition:outline-color .15s; cursor:text; }
-  [contenteditable="true"]:hover, [contenteditable="true"]:focus{ outline-color:var(--clay); outline:1px dashed var(--clay); }
-
-  nav{ position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:28px 6vw; mix-blend-mode:difference; }
-  .nav-name{ font-family:'Fraunces',serif; font-size:1.05rem; }
-  .edit-pill{ position:fixed; top:26px; right:6vw; z-index:110; background:var(--clay); color:#0f0f0e; font-size:.72rem; padding:6px 12px; border-radius:100px; font-weight:500; }
-
-  .hero{ min-height:80svh; display:flex; flex-direction:column; justify-content:flex-end; padding:0 6vw 8vh; position:relative; }
-  .hero-bg{ position:absolute; inset:0; background:radial-gradient(ellipse at 30% 20%,#23201c 0%,transparent 55%),linear-gradient(180deg,#100f0e 0%,#0a0a09 100%); }
-  .hero-content{ position:relative; z-index:2; }
-  .hero-eyebrow{ font-size:.85rem; color:var(--clay); margin-bottom:18px; display:flex; align-items:center; gap:14px; }
-  .hero-eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--clay); }
-  .hero h1{ font-size:clamp(2.4rem,7vw,5.5rem); line-height:.98; max-width:20ch; }
-  .hero-sub{ margin-top:24px; max-width:44ch; font-size:1.05rem; color:var(--paper-dim); }
-
-  section{ padding:9vh 6vw; }
-  .section-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:5vh; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:20px; }
-  .section-head h2{ font-size:clamp(1.7rem,3.4vw,2.4rem); }
-  .btn{ background:none; border:1px solid var(--line); color:var(--paper-dim); padding:9px 16px; border-radius:100px; font-size:.78rem; cursor:pointer; font-family:'Work Sans',sans-serif; white-space:nowrap; }
-  .btn:hover{ border-color:var(--clay); color:var(--clay); }
+  #appRoot{ display:none; padding:0 6vw 110px; max-width:1000px; margin:0 auto; }
+  #appRoot h2{ font-size:1.5rem; margin:5vh 0 3vh; border-top:1px solid var(--line); padding-top:5vh; }
+  #appRoot h2:first-of-type{ border:none; padding-top:6vh; }
+  .card{ background:var(--bg-raised); border:1px solid var(--line); padding:24px; margin-bottom:2vh; }
+  label{ display:block; font-size:.76rem; color:var(--paper-dim); margin:14px 0 5px; }
+  label:first-child{ margin-top:0; }
+  input[type=text], input[type=date], textarea{ width:100%; background:var(--bg); border:1px solid var(--line); color:var(--paper); padding:10px 12px; font-family:'Work Sans',sans-serif; font-size:.88rem; border-radius:2px; }
+  textarea{ min-height:70px; }
+  input[type=file]{ font-size:.82rem; color:var(--paper-dim); margin-top:2px; }
+  .row{ display:flex; gap:14px; } .row>div{ flex:1; }
+  .btn{ background:none; border:1px solid var(--line); color:var(--paper-dim); padding:9px 16px; border-radius:100px; font-size:.78rem; cursor:pointer; font-family:'Work Sans',sans-serif; }
   .btn.solid{ background:var(--clay); color:#0f0f0e; border:none; font-weight:500; }
   .btn.danger{ border-color:var(--err); color:var(--err); }
+  .msg{ font-size:.78rem; margin-top:10px; }
+  .msg.ok{ color:var(--ok); } .msg.err{ color:var(--err); }
 
-  .place-block{ margin-bottom:8vh; }
-  .place-title{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:2vh; }
-  .place-title h3{ font-size:clamp(1.3rem,2.6vw,1.8rem); }
+  .gallery{ display:grid; grid-template-columns:repeat(auto-fill, minmax(180px,1fr)); gap:12px; margin-top:2vh; }
+  .frame{ position:relative; background:var(--bg); border-radius:5px; overflow:hidden; aspect-ratio:1/1; box-shadow:0 0 0 1px var(--line); }
+  .frame img, .frame video{ width:100%; height:100%; object-fit:cover; display:block; }
+  .frame .actions{ position:absolute; top:6px; right:6px; display:flex; gap:5px; }
+  .frame .actions button{ background:rgba(15,15,14,.85); border-radius:100px; padding:4px 10px; font-size:.68rem; cursor:pointer; border:1px solid; }
+  .frame .edit-btn{ color:var(--clay); border-color:var(--clay); }
+  .frame .del-btn{ color:var(--err); border-color:var(--err); }
+  .frame .label{ position:absolute; left:0; right:0; bottom:0; padding:8px; font-size:.7rem; background:linear-gradient(0deg,rgba(0,0,0,.75),transparent); }
 
-  .gallery{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:16px; }
-  .frame{ position:relative; background:var(--bg-raised); border-radius:6px; overflow:hidden; aspect-ratio:4/5; box-shadow:0 0 0 1px var(--line); transition:box-shadow .2s ease; }
-  .frame:hover{ box-shadow:0 0 0 1.5px var(--clay); }
-  .frame img, .frame video{ width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; user-select:none; }
-  .frame .cap{ position:absolute; left:0; right:0; bottom:0; padding:12px 14px; background:linear-gradient(0deg,rgba(0,0,0,.8),transparent); font-size:.75rem; }
-
-  .add-frame{ border:1px dashed var(--line); aspect-ratio:4/5; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--paper-dim); font-size:.85rem; text-align:center; padding:14px; }
-  .add-frame:hover{ border-color:var(--clay); color:var(--clay); }
-
-  .inline-form{ background:var(--bg-raised); border:1px solid var(--clay); padding:20px; margin-bottom:6vh; display:none; }
+  .inline-form{ display:none; margin-top:2vh; }
   .inline-form.open{ display:block; }
-  .inline-form label{ display:block; font-size:.75rem; color:var(--paper-dim); margin:12px 0 5px; }
-  .inline-form label:first-child{ margin-top:0; }
-  .inline-form input[type=text], .inline-form input[type=date], .inline-form textarea{ width:100%; background:var(--bg); border:1px solid var(--line); color:var(--paper); padding:10px 12px; font-family:'Work Sans',sans-serif; font-size:.88rem; border-radius:2px; }
-  .inline-form textarea{ min-height:60px; }
-  .inline-form input[type=file]{ margin-top:4px; font-size:.82rem; color:var(--paper-dim); }
-  .inline-form .row{ display:flex; gap:14px; }
-  .inline-form .row>div{ flex:1; }
-  .inline-form .actions{ margin-top:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-  .inline-form .msg{ font-size:.78rem; }
-  .inline-form .msg.ok{ color:var(--ok); }
-  .inline-form .msg.err{ color:var(--err); }
 
-  .about{ max-width:70ch; }
-  .about-text p{ margin-bottom:1.2em; color:var(--paper-dim); max-width:60ch; }
-  .skills{ display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
-  .skills span.tag{ border:1px solid var(--line); padding:7px 14px; border-radius:100px; font-size:.8rem; color:var(--paper-dim); display:inline-flex; align-items:center; gap:8px; }
-  .skills span.tag .rm{ cursor:pointer; color:var(--err); font-weight:600; }
-  .skills .add-skill{ border:1px dashed var(--line); padding:7px 14px; border-radius:100px; font-size:.8rem; cursor:pointer; }
-  .skills .add-skill:hover{ border-color:var(--clay); color:var(--clay); }
-
-  .contact-row{ display:flex; gap:50px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:26px; }
-  .contact-col span{ display:block; font-size:.75rem; color:var(--paper-dim); margin-bottom:8px; }
-  .contact-col a{ font-size:1rem; text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:2px; }
-
-  #editBar{ position:fixed; left:0; right:0; bottom:0; z-index:150; background:var(--bg-raised); border-top:1px solid var(--line); padding:16px 6vw; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
-  #editBar .status{ font-size:.8rem; color:var(--paper-dim); }
-  #editBar .status.ok{ color:var(--ok); }
-  #editBar .status.err{ color:var(--err); }
-  #editBar .actions{ display:flex; gap:10px; }
+  #editBar{ position:fixed; left:0; right:0; bottom:0; z-index:50; background:var(--bg-raised); border-top:1px solid var(--line); padding:14px 6vw; display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; }
+  #editBar .status{ font-size:.78rem; color:var(--paper-dim); }
 </style>
 </head>
 <body>
@@ -103,119 +63,81 @@
   <div class="lock-card">
     <h1>Edit mode</h1>
     <p>Enter your repo connection and access token once — saved only in this browser.</p>
-    <label>GitHub username / org</label>
-    <input type="text" id="lkOwner">
-    <label>Repository name</label>
-    <input type="text" id="lkRepo">
-    <label>Branch</label>
-    <input type="text" id="lkBranch" placeholder="main" value="main">
-    <label>Personal access token</label>
-    <input type="password" id="lkToken" placeholder="ghp_...">
+    <label>GitHub username / org</label><input type="text" id="lkOwner">
+    <label>Repository name</label><input type="text" id="lkRepo">
+    <label>Branch</label><input type="text" id="lkBranch" value="main">
+    <label>Personal access token</label><input type="text" id="lkToken" placeholder="ghp_...">
     <button id="unlockBtn">Unlock editing</button>
     <div class="lock-msg" id="lockMsg"></div>
   </div>
 </div>
 
 <div id="appRoot">
-  <div class="edit-pill">✎ Edit mode</div>
-  <nav>
-    <div class="nav-name">Al Nafis Fuad Shuvo</div>
-  </nav>
-
-  <header class="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-content">
-      <div class="hero-eyebrow"><span class="dot"></span> Photographer, Vienna</div>
-      <h1 id="heroTitle" contenteditable="true"></h1>
-      <p class="hero-sub" id="heroSub" contenteditable="true"></p>
+  <h2>Page text</h2>
+  <div class="card">
+    <label>Hero title</label><input type="text" id="heroTitle">
+    <label>Hero subtitle</label><textarea id="heroSub"></textarea>
+    <label>About — paragraph 1</label><textarea id="aboutP1"></textarea>
+    <label>About — paragraph 2</label><textarea id="aboutP2"></textarea>
+    <label>About — paragraph 3</label><textarea id="aboutP3"></textarea>
+    <label>Skills / tags (comma separated)</label><input type="text" id="skills">
+    <div class="row">
+      <div><label>Email</label><input type="text" id="ctEmail"></div>
+      <div><label>Instagram handle</label><input type="text" id="ctInstagram"></div>
     </div>
-  </header>
+    <label>LinkedIn handle</label><input type="text" id="ctLinkedin">
+    <label>Portrait photo</label>
+    <div id="portraitPreview" style="width:110px;aspect-ratio:3/4;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:8px;color:var(--paper-dim);font-size:.7rem;text-align:center;">No portrait yet</div>
+    <input type="file" id="portraitFile" accept="image/*">
+    <button class="btn" id="portraitUploadBtn" style="margin-top:8px;">Upload portrait</button>
+    <span class="msg" id="portraitMsg"></span>
+    <label style="margin-top:20px;">Other social links</label>
+    <div id="extraLinksList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+    <button class="btn" id="addExtraLinkBtn">+ Add link</button>
+  </div>
 
-  <section id="work">
-    <div class="section-head">
-      <h2>Selected work</h2>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <button class="btn" id="optimizeBtn">⚡ Speed up old photos</button>
-        <button class="btn solid" id="addPlaceBtn">+ Add a new place</button>
-      </div>
-    </div>
-    <div id="optimizeStatus" style="font-size:.78rem;color:var(--paper-dim);margin-bottom:3vh;display:none;"></div>
-    <div id="newPlaceForm" class="inline-form">
-      <label>Place name</label>
-      <input type="text" id="npPlace" placeholder="e.g. Salzburg">
+  <h2>Photos &amp; videos</h2>
+  <div class="card">
+    <button class="btn solid" id="addPlaceBtn">+ Add photos / videos</button>
+    <div class="inline-form" id="newPlaceForm">
+      <label>Place name</label><input type="text" id="npPlace" placeholder="e.g. Salzburg">
       <div class="row">
         <div><label>Date taken</label><input type="date" id="npDate"></div>
         <div><label>Region (optional)</label><input type="text" id="npRegion"></div>
       </div>
-      <label>Story / caption</label>
-      <textarea id="npStory"></textarea>
-      <label>Photos or short videos (you can select several at once)</label>
+      <label>Story / caption</label><textarea id="npStory"></textarea>
+      <label>Files (photos or short videos — select several at once)</label>
       <input type="file" id="npFile" accept="image/*,video/*" multiple>
-      <div class="actions">
-        <button class="btn solid" id="npSubmit">Add to site</button>
+      <div style="margin-top:14px;display:flex;gap:10px;align-items:center;">
+        <button class="btn solid" id="npSubmit">Upload</button>
         <button class="btn" id="npCancel">Cancel</button>
         <span class="msg" id="npMsg"></span>
       </div>
     </div>
-    <div id="editPhotoForm" class="inline-form">
-      <label>Place name</label>
-      <input type="text" id="epPlace">
+    <div class="inline-form" id="editPhotoForm">
+      <label>Place name</label><input type="text" id="epPlace">
       <div class="row">
         <div><label>Date taken</label><input type="date" id="epDate"></div>
         <div><label>Region (optional)</label><input type="text" id="epRegion"></div>
       </div>
-      <label>Story / caption</label>
-      <textarea id="epStory"></textarea>
-      <label>Replace with a new photo or video (optional — leave empty to keep the current one)</label>
+      <label>Story / caption</label><textarea id="epStory"></textarea>
+      <label>Replace file (optional)</label>
       <input type="file" id="epFile" accept="image/*,video/*">
-      <div class="actions">
+      <div style="margin-top:14px;display:flex;gap:10px;align-items:center;">
         <button class="btn solid" id="epSubmit">Save changes</button>
         <button class="btn" id="epCancel">Cancel</button>
         <span class="msg" id="epMsg"></span>
       </div>
     </div>
     <div id="gallery-root"></div>
-  </section>
-
-  <section id="about">
-    <div class="section-head"><h2>About</h2></div>
-    <div class="about">
-      <div style="margin-bottom:22px;">
-        <label style="display:block;font-size:.75rem;color:var(--paper-dim);margin-bottom:8px;">Your portrait photo</label>
-        <div id="portraitPreview" style="width:140px;aspect-ratio:3/4;background:var(--bg-raised);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px;color:var(--paper-dim);font-size:.75rem;text-align:center;">No portrait yet</div>
-        <input type="file" id="portraitFile" accept="image/*">
-        <button class="btn" id="portraitUploadBtn" style="margin-top:8px;">Upload portrait</button>
-        <span class="msg" id="portraitMsg" style="margin-left:10px;font-size:.78rem;"></span>
-      </div>
-      <div class="about-text">
-        <p id="aboutP1" contenteditable="true"></p>
-        <p id="aboutP2" contenteditable="true"></p>
-        <p id="aboutP3" contenteditable="true"></p>
-        <div class="skills" id="skillsList"></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <h2>Let's make an image worth keeping.</h2>
-    <div class="contact-row">
-      <div class="contact-col"><span>Email</span><a id="ctEmail" contenteditable="true"></a></div>
-      <div class="contact-col"><span>Instagram</span><a id="ctInstagram" contenteditable="true"></a></div>
-      <div class="contact-col"><span>LinkedIn</span><a id="ctLinkedin" contenteditable="true"></a></div>
-    </div>
-    <div style="margin-top:24px;">
-      <label style="display:block;font-size:.75rem;color:var(--paper-dim);margin-bottom:10px;">Other social links</label>
-      <div id="extraLinksList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;"></div>
-      <button class="btn" id="addExtraLinkBtn">+ Add another link</button>
-    </div>
-  </section>
+  </div>
 </div>
 
 <div id="editBar" style="display:none;">
-  <span class="status" id="editStatus">Text edits save when you press "Save text" — photo add/delete saves instantly.</span>
-  <div class="actions">
+  <span class="status" id="editStatus">Text edits save when you press "Save page text" — photo/video changes save instantly.</span>
+  <div style="display:flex;gap:10px;">
     <button class="btn danger" id="disconnectBtn">Disconnect</button>
-    <button class="btn solid" id="saveSiteBtn">Save text</button>
+    <button class="btn solid" id="saveSiteBtn">Save page text</button>
   </div>
 </div>
 
@@ -230,32 +152,19 @@ function getSettings(){
     token: localStorage.getItem('gh_token') || ''
   };
 }
-
 $('lkOwner').value = getSettings().owner;
 $('lkRepo').value = getSettings().repo;
 $('lkBranch').value = getSettings().branch || 'main';
 $('lkToken').value = getSettings().token;
 
 $('unlockBtn').addEventListener('click', () => {
-  const owner = $('lkOwner').value.trim();
-  const repo = $('lkRepo').value.trim();
-  const branch = $('lkBranch').value.trim() || 'main';
-  const token = $('lkToken').value.trim();
-  if(!owner || !repo || !token){
-    $('lockMsg').className = 'lock-msg err';
-    $('lockMsg').textContent = 'Fill in owner, repository and token.';
-    return;
-  }
-  localStorage.setItem('gh_owner', owner);
-  localStorage.setItem('gh_repo', repo);
-  localStorage.setItem('gh_branch', branch);
-  localStorage.setItem('gh_token', token);
-  $('lockScreen').style.display = 'none';
-  $('appRoot').style.display = 'block';
-  $('editBar').style.display = 'flex';
-  boot();
+  const owner = $('lkOwner').value.trim(), repo = $('lkRepo').value.trim();
+  const branch = $('lkBranch').value.trim() || 'main', token = $('lkToken').value.trim();
+  if(!owner || !repo || !token){ $('lockMsg').style.display='block'; $('lockMsg').textContent='Fill in owner, repository and token.'; return; }
+  localStorage.setItem('gh_owner', owner); localStorage.setItem('gh_repo', repo);
+  localStorage.setItem('gh_branch', branch); localStorage.setItem('gh_token', token);
+  startApp();
 });
-
 $('disconnectBtn').addEventListener('click', () => {
   if(!confirm('Remove the saved token from this browser?')) return;
   ['gh_owner','gh_repo','gh_branch','gh_token'].forEach(k => localStorage.removeItem(k));
@@ -264,7 +173,6 @@ $('disconnectBtn').addEventListener('click', () => {
 
 function api(path){ const s = getSettings(); return `https://api.github.com/repos/${s.owner}/${s.repo}/contents/${path}`; }
 function authHeaders(){ const s = getSettings(); return { 'Authorization':'Bearer '+s.token, 'Accept':'application/vnd.github+json' }; }
-
 async function getFile(path){
   const s = getSettings();
   const res = await fetch(api(path)+`?ref=${s.branch}`, { headers: authHeaders() });
@@ -280,103 +188,16 @@ async function putFile(path, base64Content, message, sha){
   if(!res.ok){ const t = await res.text(); throw new Error(`GitHub write error (${path}): ${res.status} ${t}`); }
   return res.json();
 }
-function b64EncodeUnicode(str){ return btoa(unescape(encodeURIComponent(str))); }
-function b64DecodeUnicode(str){ return decodeURIComponent(escape(atob(str))); }
-
+function b64Enc(str){ return btoa(unescape(encodeURIComponent(str))); }
+function b64Dec(str){ return decodeURIComponent(escape(atob(str))); }
 async function loadJsonFile(path, fallback){
   const existing = await getFile(path);
   if(!existing) return { data: fallback, sha: null };
-  const text = b64DecodeUnicode(existing.content.replace(/\n/g,''));
   let data = fallback;
-  try{ data = JSON.parse(text); }catch(e){}
+  try{ data = JSON.parse(b64Dec(existing.content.replace(/\n/g,''))); }catch(e){}
   return { data, sha: existing.sha };
 }
-
-// Keeps photos looking sharp on any screen while capping the master file size.
-// Every photo is exported TWICE from a single canvas draw:
-//   • full  — 2400px master, used by the lightbox and high-DPI (Retina) screens
-//   • thumb — 1200px preview, used by the grid so pages load fast
-// NOTE: since the repo is public, a determined visitor can still find an image's
-// direct URL via view-source or the browser's network tab — this is not true DRM,
-// just a strong display copy that isn't your raw camera original.
-function processImage(file, fullDim = 2400, fullQ = 0.86, thumbDim = 1200, thumbQ = 0.8){
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      const scale = Math.min(1, fullDim / Math.max(img.width, img.height));
-      const fw = Math.max(1, Math.round(img.width * scale));
-      const fh = Math.max(1, Math.round(img.height * scale));
-      const canvas = document.createElement('canvas');
-      canvas.width = fw; canvas.height = fh;
-      const ctx = canvas.getContext('2d');
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(img, 0, 0, fw, fh);
-      const full = canvas.toDataURL('image/jpeg', fullQ).split(',')[1];
-
-      const tscale = Math.min(1, thumbDim / Math.max(fw, fh));
-      const tw = Math.max(1, Math.round(fw * tscale));
-      const th = Math.max(1, Math.round(fh * tscale));
-      const tc = document.createElement('canvas');
-      tc.width = tw; tc.height = th;
-      const tctx = tc.getContext('2d');
-      tctx.imageSmoothingQuality = 'high';
-      tctx.drawImage(canvas, 0, 0, tw, th);
-      const thumb = tc.toDataURL('image/jpeg', thumbQ).split(',')[1];
-
-      URL.revokeObjectURL(url);
-      resolve({ full, thumb });
-    };
-    img.onerror = reject;
-    img.src = url;
-  });
-}
-
-// One-time helper: older photos uploaded before the thumb/full split only have a
-// heavy "full" image and no light "thumb" — this fetches each one, makes a fast
-// preview, and fills in the missing thumb so the grid loads quickly for everyone.
-async function optimizeOldPhotos(){
-  const statusEl = $('optimizeStatus');
-  statusEl.style.display = 'block';
-  statusEl.textContent = 'Checking for older photos…';
-  $('optimizeBtn').disabled = true;
-  try{
-    const { data: list, sha } = await loadJsonFile('data/photos.json', []);
-    const missing = list.filter(p => p.type !== 'video' && p.image && !p.thumb);
-    if(!missing.length){
-      statusEl.textContent = 'Every photo already has a fast preview ✓';
-      return;
-    }
-    for(let i = 0; i < missing.length; i++){
-      const p = missing[i];
-      statusEl.textContent = `Optimizing ${i+1} of ${missing.length}: ${p.place}…`;
-      try{
-        const resp = await fetch(p.image, { cache: 'no-store' });
-        const blob = await resp.blob();
-        const file = new File([blob], 'src.jpg', { type: blob.type || 'image/jpeg' });
-        const { thumb } = await processImage(file);
-        const thumbPath = p.image.replace(/\.[^.]+$/, '') + '-thumb.jpg';
-        await putFile(thumbPath, thumb, `Add preview for ${p.place}`);
-        p.thumb = thumbPath;
-      }catch(e){
-        console.error('Skipped one photo:', e);
-      }
-    }
-    const encoded = b64EncodeUnicode(JSON.stringify(list, null, 2));
-    await putFile('data/photos.json', encoded, 'Add previews for older photos', sha);
-    photos = list;
-    renderGallery();
-    statusEl.textContent = `Done — ${missing.length} photo(s) optimized ✓ Refresh the main site in a minute to see faster loading.`;
-  }catch(e){
-    statusEl.textContent = 'Something went wrong: ' + e.message;
-  }finally{
-    $('optimizeBtn').disabled = false;
-  }
-}
-$('optimizeBtn').addEventListener('click', optimizeOldPhotos);
-
 function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
-
 function fileToBase64Raw(file){
   return new Promise((resolve, reject) => {
     const r = new FileReader();
@@ -386,53 +207,64 @@ function fileToBase64Raw(file){
   });
 }
 
-// If a video is too big for GitHub's upload limit, re-encode it in the browser at a
-// lower bitrate while keeping the exact same width/height (no downscaling) — so it
-// still looks like the original resolution, just compressed harder, like any web video.
-const VIDEO_SAFE_MB = 55; // more bitrate headroom than before = smoother, less choppy compressed output
+// One resize pass = one grid-ready thumbnail + one lightbox-ready full version.
+function processImage(file, fullDim = 2000, fullQ = 0.85, thumbDim = 900, thumbQ = 0.78){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const draw = (maxDim, q) => {
+        let { width, height } = img;
+        if(width > maxDim || height > maxDim){
+          const scale = maxDim / Math.max(width, height);
+          width = Math.round(width*scale); height = Math.round(height*scale);
+        }
+        const c = document.createElement('canvas');
+        c.width = width; c.height = height;
+        c.getContext('2d').drawImage(img, 0, 0, width, height);
+        return c.toDataURL('image/jpeg', q).split(',')[1];
+      };
+      const full = draw(fullDim, fullQ);
+      const thumb = draw(thumbDim, thumbQ);
+      URL.revokeObjectURL(url);
+      resolve({ full, thumb });
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
 
+const VIDEO_SAFE_MB = 55;
 function compressVideoIfNeeded(file, statusEl){
   if(file.size <= VIDEO_SAFE_MB * 1024 * 1024) return Promise.resolve(file);
-
   if(!(window.MediaRecorder && HTMLVideoElement.prototype.captureStream)){
-    if(statusEl) statusEl.textContent = 'This browser can\'t auto-compress video — try Chrome, or shrink the file yourself first.';
-    return Promise.resolve(file); // fall through and let the upload attempt (and fail) with a clear GitHub error
+    if(statusEl) statusEl.textContent = "This browser can't auto-compress video — try Chrome, or shrink the file first.";
+    return Promise.resolve(file);
   }
-
   return new Promise((resolve) => {
     const video = document.createElement('video');
-    video.muted = true;
-    video.playsInline = true;
+    video.muted = true; video.playsInline = true;
     video.src = URL.createObjectURL(file);
-
     video.onloadedmetadata = () => {
       const duration = video.duration || 10;
-      const targetBits = VIDEO_SAFE_MB * 8 * 1024 * 1024 * 0.85; // small safety margin
+      const targetBits = VIDEO_SAFE_MB * 8 * 1024 * 1024 * 0.85;
       const videoBitsPerSecond = Math.max(500000, Math.floor(targetBits / duration));
-
-      const mimeCandidates = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
-      const mimeType = mimeCandidates.find(t => MediaRecorder.isTypeSupported(t)) || 'video/webm';
-
+      const mimeType = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(t => MediaRecorder.isTypeSupported(t)) || 'video/webm';
       let stream;
       try{ stream = video.captureStream(30); }catch(e){ try{ stream = video.captureStream(); }catch(e2){ resolve(file); return; } }
-
       let recorder;
-      try{ recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond }); }
-      catch(e){ resolve(file); return; }
-
+      try{ recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond }); }catch(e){ resolve(file); return; }
       const chunks = [];
       recorder.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
       recorder.onstop = () => {
         URL.revokeObjectURL(video.src);
         const blob = new Blob(chunks, { type: mimeType });
-        const newName = file.name.replace(/\.[^.]+$/, '') + '.webm';
-        resolve(new File([blob], newName, { type: mimeType }));
+        resolve(new File([blob], file.name.replace(/\.[^.]+$/, '') + '.webm', { type: mimeType }));
       };
       recorder.onerror = () => resolve(file);
-
       video.onended = () => { try{ recorder.stop(); }catch(e){} };
       video.play().then(() => {
-        if(statusEl) statusEl.textContent = `Compressing video (~${Math.ceil(duration)}s, please wait)…`;
+        if(statusEl) statusEl.textContent = `Compressing video (~${Math.ceil(duration)}s)…`;
         recorder.start(1000);
       }).catch(() => resolve(file));
     };
@@ -443,179 +275,162 @@ function compressVideoIfNeeded(file, statusEl){
 let photos = [];
 let siteData = {};
 let currentSkills = [];
-
-async function boot(){
-  const site = await loadJsonFile('data/site.json', {});
-  siteData = site.data;
-  const ph = await loadJsonFile('data/photos.json', []);
-  photos = Array.isArray(ph.data) ? ph.data : [];
-  fillForm();
-  renderGallery();
-}
+let extraLinks = [];
 
 function fillForm(){
-  $('heroTitle').textContent = siteData.heroTitle || "Frames that hold a little longer than a glance.";
-  $('heroSub').textContent = siteData.heroSub || "Originally from Bangladesh, now studying and shooting in Vienna — I make images out of streets, architecture, and the corners of Austria I find while I'm out there.";
-  $('aboutP1').textContent = siteData.aboutP1 || "I'm Al Nafis Fuad Shuvo, an international student from Bangladesh, currently based in Vienna, Austria.";
-  $('aboutP2').textContent = siteData.aboutP2 || "I'm pursuing an MSc in Digital Economy at WU Wien. Photography is what I do between lectures, commutes, and trips around the country.";
-  $('aboutP3').textContent = siteData.aboutP3 || "Every photo below is tied to the place I took it — this page grows as I go.";
-  $('ctEmail').textContent = siteData.email || "shuvonafis66@gmail.com";
-  $('ctInstagram').textContent = siteData.instagramHandle ? '@'+siteData.instagramHandle.replace(/^@/,'') : "@al_nafis_fuad_shuvo";
-  $('ctLinkedin').textContent = siteData.linkedinHandle || "nafisfuadshuvo";
-
-  const skills = Array.isArray(siteData.skills) && siteData.skills.length ? siteData.skills : ["Street Photography","Architecture","Travel","Austria"];
-  renderSkills(skills);
-
-  if(siteData.portraitImage) showPortraitPreview(siteData.portraitImage);
+  $('heroTitle').value = siteData.heroTitle || "Frames that hold a little longer than a glance.";
+  $('heroSub').value = siteData.heroSub || "Originally from Bangladesh, now studying and shooting in Vienna — I make images out of streets, architecture, and the corners of Austria I find while I'm out there.";
+  $('aboutP1').value = siteData.aboutP1 || "I'm Al Nafis Fuad Shuvo, an international student from Bangladesh, currently based in Vienna, Austria.";
+  $('aboutP2').value = siteData.aboutP2 || "I'm pursuing an MSc in Digital Economy at WU Wien. Photography is what I do between lectures, commutes, and trips around the country.";
+  $('aboutP3').value = siteData.aboutP3 || "Every photo below is tied to the place I took it — this page grows as I go.";
+  $('ctEmail').value = siteData.email || "shuvonafis66@gmail.com";
+  $('ctInstagram').value = siteData.instagramHandle || "al_nafis_fuad_shuvo";
+  $('ctLinkedin').value = siteData.linkedinHandle || "nafisfuadshuvo";
+  $('skills').value = (Array.isArray(siteData.skills) && siteData.skills.length ? siteData.skills : ["Street Photography","Architecture","Travel","Austria"]).join(', ');
+  if(siteData.portraitImage) $('portraitPreview').innerHTML = `<img src="${siteData.portraitImage}" style="width:100%;height:100%;object-fit:cover;">`;
   extraLinks = Array.isArray(siteData.extraLinks) ? siteData.extraLinks.slice() : [];
   renderExtraLinks();
 }
-
-function renderSkills(list){
-  currentSkills = list.slice();
-  const box = $('skillsList');
-  box.innerHTML = '';
-  currentSkills.forEach((sk, i) => {
-    const span = document.createElement('span');
-    span.className = 'tag';
-    span.innerHTML = `${sk} <span class="rm" data-i="${i}">✕</span>`;
-    span.querySelector('.rm').addEventListener('click', () => { currentSkills.splice(i,1); renderSkills(currentSkills); });
-    box.appendChild(span);
+function renderExtraLinks(){
+  const box = $('extraLinksList'); box.innerHTML = '';
+  extraLinks.forEach((link, i) => {
+    const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px;';
+    row.innerHTML = `<input type="text" placeholder="Label" value="${link.label||''}" style="flex:1;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:9px 12px;border-radius:2px;font-size:.85rem;">
+                      <input type="text" placeholder="https://..." value="${link.url||''}" style="flex:2;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:9px 12px;border-radius:2px;font-size:.85rem;">
+                      <button class="btn danger">✕</button>`;
+    const [a,b,c] = row.children;
+    a.addEventListener('input', () => extraLinks[i].label = a.value);
+    b.addEventListener('input', () => extraLinks[i].url = b.value);
+    c.addEventListener('click', () => { extraLinks.splice(i,1); renderExtraLinks(); });
+    box.appendChild(row);
   });
-  const add = document.createElement('span');
-  add.className = 'add-skill';
-  add.textContent = '+ tag';
-  add.addEventListener('click', () => {
-    const val = prompt('New tag:');
-    if(val && val.trim()) { currentSkills.push(val.trim()); renderSkills(currentSkills); }
-  });
-  box.appendChild(add);
 }
+$('addExtraLinkBtn').addEventListener('click', () => { extraLinks.push({label:'',url:''}); renderExtraLinks(); });
+
+$('portraitUploadBtn').addEventListener('click', async () => {
+  const file = $('portraitFile').files[0];
+  if(!file){ $('portraitMsg').className='msg err'; $('portraitMsg').textContent='Choose a photo first.'; return; }
+  $('portraitUploadBtn').disabled = true;
+  $('portraitMsg').className='msg ok'; $('portraitMsg').textContent='Uploading…';
+  try{
+    const { full } = await processImage(file, 1400, 0.9, 700, 0.8);
+    const path = 'assets/photos/profile.jpg';
+    const existing = await getFile(path);
+    await putFile(path, full, 'Update portrait', existing ? existing.sha : null);
+    siteData.portraitImage = path;
+    $('portraitPreview').innerHTML = `<img src="${path}" style="width:100%;height:100%;object-fit:cover;">`;
+    $('portraitMsg').textContent = 'Uploaded ✓ — press "Save page text" to publish.';
+  }catch(e){ $('portraitMsg').className='msg err'; $('portraitMsg').textContent = e.message; }
+  finally{ $('portraitUploadBtn').disabled = false; }
+});
+
+$('saveSiteBtn').addEventListener('click', async () => {
+  $('editStatus').textContent = 'Saving…';
+  try{
+    const { sha } = await loadJsonFile('data/site.json', {});
+    const payload = {
+      heroTitle: $('heroTitle').value.trim(), heroSub: $('heroSub').value.trim(),
+      aboutP1: $('aboutP1').value.trim(), aboutP2: $('aboutP2').value.trim(), aboutP3: $('aboutP3').value.trim(),
+      skills: $('skills').value.split(',').map(x=>x.trim()).filter(Boolean),
+      email: $('ctEmail').value.trim(),
+      instagramHandle: $('ctInstagram').value.trim().replace(/^@/,''),
+      linkedinHandle: $('ctLinkedin').value.trim(),
+      portraitImage: siteData.portraitImage || '',
+      extraLinks: extraLinks.filter(l => l.label && l.url)
+    };
+    await putFile('data/site.json', b64Enc(JSON.stringify(payload, null, 2)), 'Update page text', sha);
+    $('editStatus').textContent = 'Saved ✓ — refresh the main site in a minute to see it.';
+  }catch(e){ $('editStatus').textContent = e.message; }
+});
 
 function groupByPlace(list){
   const groups = {}, order = [];
   list.forEach(p => { if(!groups[p.place]){ groups[p.place]=[]; order.push(p.place); } groups[p.place].push(p); });
   return order.map(place => ({ place, items: groups[place] }));
 }
-
 function renderGallery(){
-  const root = $('gallery-root');
-  root.innerHTML = '';
-  if(!photos.length){
-    root.innerHTML = '<p style="color:var(--paper-dim);">No photos yet — use "+ Add a new place" above.</p>';
-    return;
-  }
+  const root = $('gallery-root'); root.innerHTML = '';
+  if(!photos.length){ root.innerHTML = '<p style="color:var(--paper-dim);margin-top:2vh;">No photos yet.</p>'; return; }
   groupByPlace(photos).forEach(g => {
-    const block = document.createElement('div');
-    block.className = 'place-block';
-    block.innerHTML = `<div class="place-title"><h3>${g.place}</h3><span style="color:var(--paper-dim);font-size:.8rem;">${g.items.length} photo${g.items.length>1?'s':''}</span></div><div class="gallery"></div>`;
-    const gal = block.querySelector('.gallery');
+    const h = document.createElement('div');
+    h.innerHTML = `<h3 style="margin-top:3vh;font-size:1.1rem;">${g.place}</h3>`;
+    root.appendChild(h);
+    const gal = document.createElement('div'); gal.className = 'gallery';
     g.items.forEach(p => {
-      const frame = document.createElement('div');
-      frame.className = 'frame';
+      const frame = document.createElement('div'); frame.className = 'frame';
       const isVideo = p.type === 'video';
-      const mediaTag = isVideo
-        ? `<video src="${p.video}" muted loop playsinline></video><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.8rem;pointer-events:none;">▶</div>`
-        : `<img src="${p.thumb || p.image}" loading="lazy">`; // grid preview uses the light thumbnail
-      frame.innerHTML = `${mediaTag}<div style="position:absolute;top:8px;right:8px;display:flex;gap:6px;"><button class="edit" style="background:rgba(15,15,14,.85);color:var(--clay);border:1px solid var(--clay);border-radius:100px;padding:5px 11px;font-size:.7rem;cursor:pointer;opacity:0;transition:opacity .2s;">Edit</button><button class="del" style="background:rgba(15,15,14,.85);color:var(--err);border:1px solid var(--err);border-radius:100px;padding:5px 11px;font-size:.7rem;cursor:pointer;opacity:0;transition:opacity .2s;">Delete</button></div><div class="cap">${p.story ? p.story.slice(0,70) : ''}</div>`;
-      frame.addEventListener('mouseenter', () => { frame.querySelectorAll('.edit,.del').forEach(b=>b.style.opacity=1); if(isVideo) frame.querySelector('video').play().catch(()=>{}); });
-      frame.addEventListener('mouseleave', () => { frame.querySelectorAll('.edit,.del').forEach(b=>b.style.opacity=0); if(isVideo){ const v=frame.querySelector('video'); v.pause(); v.currentTime=0; } });
-      frame.querySelector('.edit').addEventListener('click', () => openEditForm(p));
-      frame.querySelector('.del').addEventListener('click', () => deletePhoto(p.id));
+      const media = isVideo ? `<video src="${p.video}" muted loop playsinline></video>` : `<img src="${p.thumb||p.image}">`;
+      frame.innerHTML = `${media}<div class="actions"><button class="edit-btn">Edit</button><button class="del-btn">Del</button></div><div class="label">${(p.story||'').slice(0,40)}</div>`;
+      if(isVideo){
+        const v = frame.querySelector('video');
+        frame.addEventListener('mouseenter', () => v.play().catch(()=>{}));
+        frame.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; });
+      }
+      frame.querySelector('.edit-btn').addEventListener('click', () => openEditForm(p));
+      frame.querySelector('.del-btn').addEventListener('click', () => deletePhoto(p.id));
       gal.appendChild(frame);
     });
-    const addTile = document.createElement('div');
-    addTile.className = 'add-frame';
-    addTile.textContent = '+ Add photo to ' + g.place;
-    addTile.addEventListener('click', () => openAddForPlace(g.place));
-    gal.appendChild(addTile);
-    root.appendChild(block);
+    root.appendChild(gal);
   });
 }
 
-function openAddForPlace(place){
-  $('npPlace').value = place;
-  $('newPlaceForm').classList.add('open');
-  $('newPlaceForm').scrollIntoView({ behavior:'smooth', block:'center' });
-}
 $('addPlaceBtn').addEventListener('click', () => {
-  $('npPlace').value = '';
+  $('editPhotoForm').classList.remove('open');
   $('newPlaceForm').classList.add('open');
-  $('newPlaceForm').scrollIntoView({ behavior:'smooth', block:'center' });
+  $('newPlaceForm').scrollIntoView({behavior:'smooth', block:'center'});
 });
 $('npCancel').addEventListener('click', () => { $('newPlaceForm').classList.remove('open'); $('npMsg').textContent=''; });
 
 $('npSubmit').addEventListener('click', async () => {
   const place = $('npPlace').value.trim();
   const files = Array.from($('npFile').files);
-  if(!place || files.length === 0){ $('npMsg').className='msg err'; $('npMsg').textContent='Place name and at least one photo/video are required.'; return; }
+  if(!place || !files.length){ $('npMsg').className='msg err'; $('npMsg').textContent='Place name and at least one file are required.'; return; }
   $('npSubmit').disabled = true;
-
   try{
     const newEntries = [];
-    for(let i = 0; i < files.length; i++){
-      let file = files[i];
+    for(let i=0;i<files.length;i++){
+      const file = files[i];
       const isVideo = file.type.startsWith('video/');
       $('npMsg').className='msg ok'; $('npMsg').textContent = `Uploading ${i+1} of ${files.length}…`;
-
       const base = `${slug(place)}-${Date.now()}-${i}`;
-      let entry = {
-        id: 'p' + Date.now() + '-' + i,
-        place,
-        region: $('npRegion').value.trim(),
-        date: $('npDate').value,
-        story: $('npStory').value.trim(),
-        type: isVideo ? 'video' : 'photo'
-      };
-
+      const entry = { id:'p'+Date.now()+'-'+i, place, region:$('npRegion').value.trim(), date:$('npDate').value, story:$('npStory').value.trim(), type: isVideo?'video':'photo' };
       if(isVideo){
-        file = await compressVideoIfNeeded(file, $('npMsg'));
-        const ext = file.name.split('.').pop() || 'webm';
-        const mediaPath = `assets/photos/${base}.${ext}`;
-        await putFile(mediaPath, await fileToBase64Raw(file), `Add video: ${place}`);
-        entry.video = mediaPath;
+        const compressed = await compressVideoIfNeeded(file, $('npMsg'));
+        const ext = compressed.name.split('.').pop() || 'webm';
+        const path = `assets/photos/${base}.${ext}`;
+        await putFile(path, await fileToBase64Raw(compressed), `Add video: ${place}`);
+        entry.video = path;
       }else{
         const { full, thumb } = await processImage(file);
         const fullPath = `assets/photos/${base}.jpg`;
         const thumbPath = `assets/photos/${base}-thumb.jpg`;
-        await putFile(fullPath, full, `Add photo (master): ${place}`);
-        $('npMsg').textContent = `Uploading ${i+1} of ${files.length} (preview)…`;
-        await putFile(thumbPath, thumb, `Add photo (preview): ${place}`);
-        entry.image = fullPath;
-        entry.thumb = thumbPath;
+        await putFile(fullPath, full, `Add photo: ${place}`);
+        await putFile(thumbPath, thumb, `Add preview: ${place}`);
+        entry.image = fullPath; entry.thumb = thumbPath;
       }
       newEntries.push(entry);
     }
-
     $('npMsg').textContent = 'Saving list…';
     const { data: list, sha } = await loadJsonFile('data/photos.json', []);
     const updated = list.concat(newEntries);
-    const encoded = b64EncodeUnicode(JSON.stringify(updated, null, 2));
-    await putFile('data/photos.json', encoded, `Add ${newEntries.length} item(s): ${place}`, sha);
-
+    await putFile('data/photos.json', b64Enc(JSON.stringify(updated, null, 2)), `Add ${newEntries.length} item(s): ${place}`, sha);
     photos = updated;
     $('npMsg').className='msg ok'; $('npMsg').textContent = `Added ${newEntries.length} item(s) ✓`;
     $('npPlace').value=''; $('npRegion').value=''; $('npDate').value=''; $('npStory').value=''; $('npFile').value='';
     setTimeout(() => { $('newPlaceForm').classList.remove('open'); $('npMsg').textContent=''; }, 1200);
     renderGallery();
-  }catch(e){
-    $('npMsg').className='msg err'; $('npMsg').textContent = e.message;
-  }finally{
-    $('npSubmit').disabled = false;
-  }
+  }catch(e){ $('npMsg').className='msg err'; $('npMsg').textContent = e.message; }
+  finally{ $('npSubmit').disabled = false; }
 });
 
 let editingId = null;
 function openEditForm(p){
   editingId = p.id;
-  $('epPlace').value = p.place || '';
-  $('epDate').value = p.date || '';
-  $('epRegion').value = p.region || '';
-  $('epStory').value = p.story || '';
-  $('epFile').value = '';
-  $('editPhotoForm').classList.add('open');
+  $('epPlace').value = p.place || ''; $('epDate').value = p.date || '';
+  $('epRegion').value = p.region || ''; $('epStory').value = p.story || ''; $('epFile').value = '';
   $('newPlaceForm').classList.remove('open');
-  $('editPhotoForm').scrollIntoView({ behavior:'smooth', block:'center' });
+  $('editPhotoForm').classList.add('open');
+  $('editPhotoForm').scrollIntoView({behavior:'smooth', block:'center'});
 }
 $('epCancel').addEventListener('click', () => { $('editPhotoForm').classList.remove('open'); $('epMsg').textContent=''; editingId=null; });
 
@@ -628,144 +443,60 @@ $('epSubmit').addEventListener('click', async () => {
   try{
     const { data: list, sha } = await loadJsonFile('data/photos.json', []);
     const idx = list.findIndex(x => x.id === editingId);
-    if(idx === -1) throw new Error('Photo not found — refresh the list.');
-
-    let file = $('epFile').files[0];
+    if(idx === -1) throw new Error('Not found — refresh and try again.');
+    const file = $('epFile').files[0];
     if(file){
       const isVideo = file.type.startsWith('video/');
       const base = `${slug(place)}-${Date.now()}`;
       if(isVideo){
-        file = await compressVideoIfNeeded(file, $('epMsg'));
-        const ext = file.name.split('.').pop() || 'webm';
-        const mediaPath = `assets/photos/${base}.${ext}`;
-        await putFile(mediaPath, await fileToBase64Raw(file), `Replace video: ${place}`);
-        list[idx].type = 'video';
-        list[idx].image = undefined;
-        list[idx].thumb = undefined;
-        list[idx].video = mediaPath;
+        const compressed = await compressVideoIfNeeded(file, $('epMsg'));
+        const ext = compressed.name.split('.').pop() || 'webm';
+        const path = `assets/photos/${base}.${ext}`;
+        await putFile(path, await fileToBase64Raw(compressed), `Replace video: ${place}`);
+        list[idx].type='video'; list[idx].video=path; list[idx].image=undefined; list[idx].thumb=undefined;
       }else{
         const { full, thumb } = await processImage(file);
-        const fullPath = `assets/photos/${base}.jpg`;
-        const thumbPath = `assets/photos/${base}-thumb.jpg`;
-        await putFile(fullPath, full, `Replace photo (master): ${place}`);
-        await putFile(thumbPath, thumb, `Replace photo (preview): ${place}`);
-        list[idx].type = 'photo';
-        list[idx].image = fullPath;
-        list[idx].thumb = thumbPath;
-        list[idx].video = undefined;
+        const fullPath = `assets/photos/${base}.jpg`, thumbPath = `assets/photos/${base}-thumb.jpg`;
+        await putFile(fullPath, full, `Replace photo: ${place}`);
+        await putFile(thumbPath, thumb, `Replace preview: ${place}`);
+        list[idx].type='photo'; list[idx].image=fullPath; list[idx].thumb=thumbPath; list[idx].video=undefined;
       }
     }
-    list[idx].place = place;
-    list[idx].date = $('epDate').value;
-    list[idx].region = $('epRegion').value.trim();
-    list[idx].story = $('epStory').value.trim();
-
-    const encoded = b64EncodeUnicode(JSON.stringify(list, null, 2));
-    await putFile('data/photos.json', encoded, `Edit entry: ${place}`, sha);
-
+    list[idx].place = place; list[idx].date = $('epDate').value;
+    list[idx].region = $('epRegion').value.trim(); list[idx].story = $('epStory').value.trim();
+    await putFile('data/photos.json', b64Enc(JSON.stringify(list, null, 2)), `Edit entry: ${place}`, sha);
     photos = list;
     $('epMsg').textContent = 'Saved ✓';
     setTimeout(() => { $('editPhotoForm').classList.remove('open'); $('epMsg').textContent=''; editingId=null; }, 800);
     renderGallery();
-  }catch(e){
-    $('epMsg').className='msg err'; $('epMsg').textContent = e.message;
-  }finally{
-    $('epSubmit').disabled = false;
-  }
+  }catch(e){ $('epMsg').className='msg err'; $('epMsg').textContent = e.message; }
+  finally{ $('epSubmit').disabled = false; }
 });
-
-// ---- portrait upload ----
-$('portraitUploadBtn').addEventListener('click', async () => {
-  const file = $('portraitFile').files[0];
-  if(!file){ $('portraitMsg').className='msg err'; $('portraitMsg').textContent='Choose a photo first.'; return; }
-  $('portraitUploadBtn').disabled = true;
-  $('portraitMsg').className='msg ok'; $('portraitMsg').textContent='Uploading…';
-  try{
-    const { full } = await processImage(file, 1600, 0.92, 800, 0.8);
-    const imagePath = 'assets/photos/profile.jpg';
-    const existing = await getFile(imagePath);
-    await putFile(imagePath, full, 'Update portrait', existing ? existing.sha : null);
-    siteData.portraitImage = imagePath;
-    showPortraitPreview(imagePath);
-    $('portraitMsg').textContent = 'Uploaded ✓ — press "Save text" below to publish.';
-  }catch(e){
-    $('portraitMsg').className='msg err'; $('portraitMsg').textContent = e.message;
-  }finally{
-    $('portraitUploadBtn').disabled = false;
-  }
-});
-function showPortraitPreview(path){
-  $('portraitPreview').innerHTML = `<img src="${path}" style="width:100%;height:100%;object-fit:cover;">`;
-}
-
-// ---- extra social links ----
-let extraLinks = [];
-function renderExtraLinks(){
-  const box = $('extraLinksList');
-  box.innerHTML = '';
-  extraLinks.forEach((link, i) => {
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;gap:8px;';
-    row.innerHTML = `<input type="text" placeholder="Label (e.g. X / Twitter)" value="${link.label||''}" style="flex:1;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:9px 12px;border-radius:2px;font-size:.85rem;">
-                      <input type="text" placeholder="https://..." value="${link.url||''}" style="flex:2;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:9px 12px;border-radius:2px;font-size:.85rem;">
-                      <button class="btn danger" style="padding:6px 12px;">✕</button>`;
-    const [labelInput, urlInput, rmBtn] = row.children;
-    labelInput.addEventListener('input', () => extraLinks[i].label = labelInput.value);
-    urlInput.addEventListener('input', () => extraLinks[i].url = urlInput.value);
-    rmBtn.addEventListener('click', () => { extraLinks.splice(i,1); renderExtraLinks(); });
-    box.appendChild(row);
-  });
-}
-$('addExtraLinkBtn').addEventListener('click', () => { extraLinks.push({label:'',url:''}); renderExtraLinks(); });
 
 async function deletePhoto(id){
-  if(!confirm('Delete this photo from the site?')) return;
+  if(!confirm('Delete this item from the site?')) return;
   try{
     const { data: list, sha } = await loadJsonFile('data/photos.json', []);
     const updated = list.filter(p => p.id !== id);
-    const encoded = b64EncodeUnicode(JSON.stringify(updated, null, 2));
-    await putFile('data/photos.json', encoded, `Remove photo ${id}`, sha);
+    await putFile('data/photos.json', b64Enc(JSON.stringify(updated, null, 2)), `Remove ${id}`, sha);
     photos = updated;
     renderGallery();
-  }catch(e){
-    alert('Could not delete: ' + e.message);
-  }
+  }catch(e){ alert('Could not delete: ' + e.message); }
 }
 
-$('saveSiteBtn').addEventListener('click', async () => {
-  $('editStatus').className = 'status ok';
-  $('editStatus').textContent = 'Saving…';
-  try{
-    const { sha } = await loadJsonFile('data/site.json', {});
-    const payload = {
-      heroTitle: $('heroTitle').textContent.trim(),
-      heroSub: $('heroSub').textContent.trim(),
-      aboutP1: $('aboutP1').textContent.trim(),
-      aboutP2: $('aboutP2').textContent.trim(),
-      aboutP3: $('aboutP3').textContent.trim(),
-      skills: currentSkills,
-      email: $('ctEmail').textContent.trim(),
-      instagramHandle: $('ctInstagram').textContent.trim().replace(/^@/,''),
-      linkedinHandle: $('ctLinkedin').textContent.trim(),
-      portraitImage: siteData.portraitImage || '',
-      extraLinks: extraLinks.filter(l => l.label && l.url)
-    };
-    const encoded = b64EncodeUnicode(JSON.stringify(payload, null, 2));
-    await putFile('data/site.json', encoded, 'Update page text', sha);
-    $('editStatus').className = 'status ok';
-    $('editStatus').textContent = 'Saved ✓ — refresh the main site in a minute to see it.';
-  }catch(e){
-    $('editStatus').className = 'status err';
-    $('editStatus').textContent = e.message;
-  }
-});
-
-if(getSettings().owner && getSettings().repo && getSettings().token){
+async function startApp(){
   $('lockScreen').style.display = 'none';
   $('appRoot').style.display = 'block';
   $('editBar').style.display = 'flex';
-  boot();
+  const site = await loadJsonFile('data/site.json', {});
+  siteData = site.data;
+  const ph = await loadJsonFile('data/photos.json', []);
+  photos = Array.isArray(ph.data) ? ph.data : [];
+  fillForm();
+  renderGallery();
 }
+
+if(getSettings().owner && getSettings().repo && getSettings().token) startApp();
 </script>
 </body>
 </html>
