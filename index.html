@@ -365,6 +365,7 @@ function render(){
   }
 
   const groups = groupByPlace(photos);
+  let isVeryFirstImage = true;
 
   groups.forEach(g => {
     const a = document.createElement('a');
@@ -396,15 +397,17 @@ function render(){
       const isFeature = idx === 0;
       if(isFeature) frame.classList.add('feature');
       const isVideo = p.type === 'video';
-      // Grid loads the light thumbnail; high-DPI screens upgrade to the full
-      // master automatically via srcset. The feature tile always gets the full file.
+      // Grid always loads the light thumbnail — the full master file is only
+      // fetched when the person actually opens the lightbox. High-DPI screens
+      // still get a sharper look automatically via srcset.
       const thumb = p.thumb || p.image;
-      const src = isFeature ? (p.image || thumb) : thumb;
+      const eager = !isVideo && isVeryFirstImage;
       const srcset = (!isVideo && p.thumb) ? ` srcset="${p.thumb} 1x, ${p.image} 2x"` : '';
-      const loadAttr = isFeature ? 'fetchpriority="high"' : 'loading="lazy"';
+      const loadAttr = eager ? 'fetchpriority="high"' : 'loading="lazy"';
+      if(!isVideo) isVeryFirstImage = false;
       const mediaTag = isVideo
         ? `<video data-src="${p.video}" muted loop playsinline preload="none" controlsList="nodownload noremoteplayback" disablePictureInPicture></video><span class="play-badge">▶</span>`
-        : `<img src="${src}"${srcset} ${loadAttr} decoding="async" alt="${(p.story||g.place).replace(/"/g,'&quot;')}">`;
+        : `<img src="${thumb}"${srcset} ${loadAttr} decoding="async" alt="${(p.story||g.place).replace(/"/g,'&quot;')}">`;
       frame.innerHTML = `${mediaTag}<span class="place-tag">${g.place}</span><div class="cap">${p.story ? p.story.slice(0,80) : g.place}</div>`;
       if(isVideo){
         lazyVideoObserver.observe(frame.querySelector('video'));
