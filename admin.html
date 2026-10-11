@@ -4,75 +4,114 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Al Nafis Fuad Shuvo — Photography (edit mode)</title>
+<title>Admin — Al Nafis Fuad Shuvo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root{ --bg:#0f0f0e; --bg-raised:#171716; --line:#2a2a28; --paper:#eee9df; --paper-dim:#9c968a; --clay:#b98a5a; --ok:#7fae7f; --err:#c97a6a; }
-  *{ margin:0; padding:0; box-sizing:border-box; }
-  body{ background:var(--bg); color:var(--paper); font-family:'Work Sans',sans-serif; font-weight:300; line-height:1.6; }
-  a{ color:inherit; }
-  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:400; }
+  :root{
+    --bg:#0d0d0c; --bg2:#151513; --bg3:#1c1c19; --line:rgba(238,233,223,.12); --line-soft:rgba(238,233,223,.07);
+    --paper:#ece7dc; --dim:#8f897d; --clay:#c99a63; --clay-soft:rgba(201,154,99,.12);
+    --ok:#8fbf8f; --err:#d0836f;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--paper);font-family:'Space Grotesk',sans-serif;font-weight:300;line-height:1.6}
+  ::selection{background:var(--clay);color:#0d0d0c}
+  a{color:inherit}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:400;letter-spacing:-.01em}
 
-  #lockScreen{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:6vw; }
-  .lock-card{ max-width:420px; width:100%; background:var(--bg-raised); border:1px solid var(--line); padding:34px; }
-  .lock-card h1{ font-size:1.4rem; margin-bottom:6px; }
-  .lock-card p{ color:var(--paper-dim); font-size:.83rem; margin-bottom:22px; }
-  .lock-card label{ display:block; font-size:.76rem; color:var(--paper-dim); margin:12px 0 5px; }
-  .lock-card label:first-of-type{ margin-top:0; }
-  .lock-card input{ width:100%; background:var(--bg); border:1px solid var(--line); color:var(--paper); padding:10px 12px; font-family:'Work Sans',sans-serif; font-size:.88rem; border-radius:2px; }
-  .lock-card button{ margin-top:20px; width:100%; background:var(--clay); color:#0f0f0e; border:none; padding:11px; font-size:.88rem; font-weight:500; cursor:pointer; border-radius:2px; }
-  .lock-msg{ margin-top:12px; font-size:.78rem; color:var(--err); display:none; }
+  /* ---------- lock screen ---------- */
+  #lockScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:6vw;
+    background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,154,99,.07), transparent 60%), var(--bg)}
+  .lock-card{max-width:440px;width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:40px;
+    box-shadow:0 30px 90px rgba(0,0,0,.5)}
+  .lock-card h1{font-size:1.7rem;margin-bottom:4px}
+  .lock-card h1 em{font-style:italic;color:var(--clay)}
+  .lock-card>p{color:var(--dim);font-size:.85rem;margin-bottom:26px}
+  .lock-brand{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--clay);margin-bottom:14px}
+  label{display:block;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:16px 0 6px}
+  label:first-child{margin-top:0}
+  input[type=text],input[type=date],input[type=password],textarea{
+    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:11px 14px;
+    font-family:'Space Grotesk',sans-serif;font-size:.9rem;border-radius:6px;transition:border-color .25s}
+  input:focus,textarea:focus{outline:none;border-color:var(--clay)}
+  textarea{min-height:76px;resize:vertical}
+  input[type=file]{font-size:.8rem;color:var(--dim);margin-top:4px;width:100%}
+  .lock-card button{margin-top:24px;width:100%;background:var(--clay);color:#0d0d0c;border:none;padding:13px;
+    font-size:.88rem;font-weight:500;letter-spacing:.04em;cursor:pointer;border-radius:6px;transition:filter .25s}
+  .lock-card button:hover{filter:brightness(1.12)}
+  .lock-msg{margin-top:14px;font-size:.8rem;color:var(--err);display:none}
 
-  #appRoot{ display:none; padding:0 6vw 110px; max-width:1000px; margin:0 auto; }
-  #appRoot h2{ font-size:1.5rem; margin:5vh 0 3vh; border-top:1px solid var(--line); padding-top:5vh; }
-  #appRoot h2:first-of-type{ border:none; padding-top:6vh; }
-  .card{ background:var(--bg-raised); border:1px solid var(--line); padding:24px; margin-bottom:2vh; }
-  label{ display:block; font-size:.76rem; color:var(--paper-dim); margin:14px 0 5px; }
-  label:first-child{ margin-top:0; }
-  input[type=text], input[type=date], textarea{ width:100%; background:var(--bg); border:1px solid var(--line); color:var(--paper); padding:10px 12px; font-family:'Work Sans',sans-serif; font-size:.88rem; border-radius:2px; }
-  textarea{ min-height:70px; }
-  input[type=file]{ font-size:.82rem; color:var(--paper-dim); margin-top:2px; }
-  .row{ display:flex; gap:14px; } .row>div{ flex:1; }
-  .btn{ background:none; border:1px solid var(--line); color:var(--paper-dim); padding:9px 16px; border-radius:100px; font-size:.78rem; cursor:pointer; font-family:'Work Sans',sans-serif; }
-  .btn.solid{ background:var(--clay); color:#0f0f0e; border:none; font-weight:500; }
-  .btn.danger{ border-color:var(--err); color:var(--err); }
-  .msg{ font-size:.78rem; margin-top:10px; }
-  .msg.ok{ color:var(--ok); } .msg.err{ color:var(--err); }
+  /* ---------- app ---------- */
+  #appRoot{display:none;padding:0 5vw 140px;max-width:1080px;margin:0 auto}
+  .app-head{padding:7vh 0 0}
+  .app-head .eyebrow{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--clay);margin-bottom:10px}
+  .app-head h1{font-size:clamp(1.9rem,4vw,2.8rem)}
+  .app-head p{color:var(--dim);font-size:.9rem;margin-top:8px}
+  #appRoot h2{font-size:1.45rem;margin:6vh 0 3vh;border-top:1px solid var(--line);padding-top:5vh}
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:30px;margin-bottom:2vh}
+  .row{display:flex;gap:16px}.row>div{flex:1;min-width:0}
+  @media(max-width:640px){.row{flex-direction:column;gap:0}}
+  .btn{background:none;border:1px solid var(--line);color:var(--dim);padding:10px 20px;border-radius:100px;
+    font-size:.78rem;letter-spacing:.06em;cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:all .25s}
+  .btn:hover{color:var(--paper);border-color:var(--paper)}
+  .btn.solid{background:var(--clay);color:#0d0d0c;border:none;font-weight:500}
+  .btn.solid:hover{filter:brightness(1.12);color:#0d0d0c}
+  .btn.danger{border-color:rgba(208,131,111,.5);color:var(--err)}
+  .btn.danger:hover{background:rgba(208,131,111,.12);border-color:var(--err);color:var(--err)}
+  .btn:disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
+  .msg{font-size:.8rem;margin-top:12px;min-height:1.2em}
+  .msg.ok{color:var(--ok)}.msg.err{color:var(--err)}
 
-  .gallery{ display:grid; grid-template-columns:repeat(auto-fill, minmax(180px,1fr)); gap:12px; margin-top:2vh; }
-  .frame{ position:relative; background:var(--bg); border-radius:5px; overflow:hidden; aspect-ratio:1/1; box-shadow:0 0 0 1px var(--line); }
-  .frame img, .frame video{ width:100%; height:100%; object-fit:cover; display:block; }
-  .frame .actions{ position:absolute; top:6px; right:6px; display:flex; gap:5px; }
-  .frame .actions button{ background:rgba(15,15,14,.85); border-radius:100px; padding:4px 10px; font-size:.68rem; cursor:pointer; border:1px solid; }
-  .frame .edit-btn{ color:var(--clay); border-color:var(--clay); }
-  .frame .del-btn{ color:var(--err); border-color:var(--err); }
-  .frame .label{ position:absolute; left:0; right:0; bottom:0; padding:8px; font-size:.7rem; background:linear-gradient(0deg,rgba(0,0,0,.75),transparent); }
+  /* gallery grid */
+  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:3vh}
+  .frame{position:relative;background:var(--bg);border-radius:6px;overflow:hidden;aspect-ratio:1/1;box-shadow:0 0 0 1px var(--line-soft)}
+  .frame img,.frame video{width:100%;height:100%;object-fit:cover;display:block}
+  .frame .actions{position:absolute;top:8px;right:8px;display:flex;gap:6px}
+  .frame .actions button{background:rgba(10,10,9,.85);backdrop-filter:blur(6px);border-radius:100px;padding:5px 12px;
+    font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:1px solid;font-family:'Space Grotesk',sans-serif}
+  .frame .edit-btn{color:var(--clay);border-color:rgba(201,154,99,.6)}
+  .frame .del-btn{color:var(--err);border-color:rgba(208,131,111,.6)}
+  .frame .label{position:absolute;left:0;right:0;bottom:0;padding:22px 10px 9px;font-size:.7rem;line-height:1.4;
+    background:linear-gradient(0deg,rgba(0,0,0,.78),transparent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-  .inline-form{ display:none; margin-top:2vh; }
-  .inline-form.open{ display:block; }
+  .inline-form{display:none;margin-top:3vh;border-top:1px dashed var(--line);padding-top:24px}
+  .inline-form.open{display:block;animation:fadeup .4s cubic-bezier(.22,1,.36,1)}
+  @keyframes fadeup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-  #editBar{ position:fixed; left:0; right:0; bottom:0; z-index:50; background:var(--bg-raised); border-top:1px solid var(--line); padding:14px 6vw; display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; }
-  #editBar .status{ font-size:.78rem; color:var(--paper-dim); }
+  .dropzone{border:1.5px dashed var(--line);border-radius:8px;padding:26px;text-align:center;color:var(--dim);
+    font-size:.84rem;margin-top:4px;cursor:pointer;transition:all .25s}
+  .dropzone:hover,.dropzone.over{border-color:var(--clay);background:var(--clay-soft);color:var(--paper)}
+
+  /* edit bar */
+  #editBar{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(21,21,19,.92);backdrop-filter:blur(14px);
+    border-top:1px solid var(--line);padding:15px 5vw;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+  #editBar .status{font-size:.78rem;color:var(--dim)}
 </style>
 </head>
 <body>
 
 <div id="lockScreen">
   <div class="lock-card">
-    <h1>Edit mode</h1>
-    <p>Enter your repo connection and access token once — saved only in this browser.</p>
-    <label>GitHub username / org</label><input type="text" id="lkOwner">
-    <label>Repository name</label><input type="text" id="lkRepo">
+    <div class="lock-brand">Portfolio CMS</div>
+    <h1>Edit <em>mode</em></h1>
+    <p>Connect your GitHub repo once — credentials stay only in this browser.</p>
+    <label>GitHub username / org</label><input type="text" id="lkOwner" autocomplete="off">
+    <label>Repository name</label><input type="text" id="lkRepo" autocomplete="off">
     <label>Branch</label><input type="text" id="lkBranch" value="main">
-    <label>Personal access token</label><input type="text" id="lkToken" placeholder="ghp_...">
+    <label>Personal access token</label><input type="password" id="lkToken" placeholder="ghp_..." autocomplete="off">
     <button id="unlockBtn">Unlock editing</button>
     <div class="lock-msg" id="lockMsg"></div>
   </div>
 </div>
 
 <div id="appRoot">
+  <div class="app-head">
+    <div class="eyebrow">Dashboard</div>
+    <h1>Manage your portfolio</h1>
+    <p>Text saves when you press the button — photos and videos publish instantly.</p>
+  </div>
+
   <h2>Page text</h2>
   <div class="card">
     <label>Hero title</label><input type="text" id="heroTitle">
@@ -87,12 +126,12 @@
     </div>
     <label>LinkedIn handle</label><input type="text" id="ctLinkedin">
     <label>Portrait photo</label>
-    <div id="portraitPreview" style="width:110px;aspect-ratio:3/4;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:8px;color:var(--paper-dim);font-size:.7rem;text-align:center;">No portrait yet</div>
+    <div id="portraitPreview" style="width:120px;aspect-ratio:3/4;background:var(--bg);border:1px solid var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px;color:var(--dim);font-size:.72rem;text-align:center;">No portrait yet</div>
     <input type="file" id="portraitFile" accept="image/*">
-    <button class="btn" id="portraitUploadBtn" style="margin-top:8px;">Upload portrait</button>
+    <div style="margin-top:12px"><button class="btn" id="portraitUploadBtn">Upload portrait</button></div>
     <span class="msg" id="portraitMsg"></span>
-    <label style="margin-top:20px;">Other social links</label>
-    <div id="extraLinksList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+    <label style="margin-top:22px;">Other social links</label>
+    <div id="extraLinksList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px;"></div>
     <button class="btn" id="addExtraLinkBtn">+ Add link</button>
   </div>
 
@@ -106,9 +145,11 @@
         <div><label>Region (optional)</label><input type="text" id="npRegion"></div>
       </div>
       <label>Story / caption</label><textarea id="npStory"></textarea>
-      <label>Files (photos or short videos — select several at once)</label>
-      <input type="file" id="npFile" accept="image/*,video/*" multiple>
-      <div style="margin-top:14px;display:flex;gap:10px;align-items:center;">
+      <label>Files</label>
+      <div class="dropzone" id="npDrop">Drag &amp; drop photos or short videos here, or click to select<br><span style="font-size:.72rem;opacity:.7">Select several at once</span></div>
+      <input type="file" id="npFile" accept="image/*,video/*" multiple style="position:absolute;left:-9999px">
+      <div id="npFileList" style="margin-top:10px;font-size:.78rem;color:var(--dim)"></div>
+      <div style="margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
         <button class="btn solid" id="npSubmit">Upload</button>
         <button class="btn" id="npCancel">Cancel</button>
         <span class="msg" id="npMsg"></span>
@@ -123,7 +164,7 @@
       <label>Story / caption</label><textarea id="epStory"></textarea>
       <label>Replace file (optional)</label>
       <input type="file" id="epFile" accept="image/*,video/*">
-      <div style="margin-top:14px;display:flex;gap:10px;align-items:center;">
+      <div style="margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
         <button class="btn solid" id="epSubmit">Save changes</button>
         <button class="btn" id="epCancel">Cancel</button>
         <span class="msg" id="epMsg"></span>
@@ -143,6 +184,7 @@
 
 <script>
 const $ = id => document.getElementById(id);
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
 function getSettings(){
   return {
@@ -165,6 +207,7 @@ $('unlockBtn').addEventListener('click', () => {
   localStorage.setItem('gh_branch', branch); localStorage.setItem('gh_token', token);
   startApp();
 });
+$('lkToken').addEventListener('keydown', e => { if(e.key === 'Enter') $('unlockBtn').click(); });
 $('disconnectBtn').addEventListener('click', () => {
   if(!confirm('Remove the saved token from this browser?')) return;
   ['gh_owner','gh_repo','gh_branch','gh_token'].forEach(k => localStorage.removeItem(k));
@@ -207,7 +250,7 @@ function fileToBase64Raw(file){
   });
 }
 
-// One resize pass = one grid-ready thumbnail + one lightbox-ready full version.
+/* One resize pass = lightbox full + grid thumbnail. */
 function processImage(file, fullDim = 2000, fullQ = 0.85, thumbDim = 900, thumbQ = 0.78){
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -274,7 +317,6 @@ function compressVideoIfNeeded(file, statusEl){
 
 let photos = [];
 let siteData = {};
-let currentSkills = [];
 let extraLinks = [];
 
 function fillForm(){
@@ -287,7 +329,7 @@ function fillForm(){
   $('ctInstagram').value = siteData.instagramHandle || "al_nafis_fuad_shuvo";
   $('ctLinkedin').value = siteData.linkedinHandle || "nafisfuadshuvo";
   $('skills').value = (Array.isArray(siteData.skills) && siteData.skills.length ? siteData.skills : ["Street Photography","Architecture","Travel","Austria"]).join(', ');
-  if(siteData.portraitImage) $('portraitPreview').innerHTML = `<img src="${siteData.portraitImage}" style="width:100%;height:100%;object-fit:cover;">`;
+  if(siteData.portraitImage) $('portraitPreview').innerHTML = `<img src="${esc(siteData.portraitImage)}" style="width:100%;height:100%;object-fit:cover;">`;
   extraLinks = Array.isArray(siteData.extraLinks) ? siteData.extraLinks.slice() : [];
   renderExtraLinks();
 }
@@ -295,9 +337,9 @@ function renderExtraLinks(){
   const box = $('extraLinksList'); box.innerHTML = '';
   extraLinks.forEach((link, i) => {
     const row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px;';
-    row.innerHTML = `<input type="text" placeholder="Label" value="${link.label||''}" style="flex:1;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:9px 12px;border-radius:2px;font-size:.85rem;">
-                      <input type="text" placeholder="https://..." value="${link.url||''}" style="flex:2;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:9px 12px;border-radius:2px;font-size:.85rem;">
-                      <button class="btn danger">✕</button>`;
+    row.innerHTML = `<input type="text" placeholder="Label" value="${esc(link.label||'')}" style="flex:1;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:10px 12px;border-radius:6px;font-size:.85rem;">
+                      <input type="text" placeholder="https://..." value="${esc(link.url||'')}" style="flex:2;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:10px 12px;border-radius:6px;font-size:.85rem;">
+                      <button class="btn danger" style="padding:8px 14px;">✕</button>`;
     const [a,b,c] = row.children;
     a.addEventListener('input', () => extraLinks[i].label = a.value);
     b.addEventListener('input', () => extraLinks[i].url = b.value);
@@ -318,7 +360,7 @@ $('portraitUploadBtn').addEventListener('click', async () => {
     const existing = await getFile(path);
     await putFile(path, full, 'Update portrait', existing ? existing.sha : null);
     siteData.portraitImage = path;
-    $('portraitPreview').innerHTML = `<img src="${path}" style="width:100%;height:100%;object-fit:cover;">`;
+    $('portraitPreview').innerHTML = `<img src="${esc(path)}" style="width:100%;height:100%;object-fit:cover;">`;
     $('portraitMsg').textContent = 'Uploaded ✓ — press "Save page text" to publish.';
   }catch(e){ $('portraitMsg').className='msg err'; $('portraitMsg').textContent = e.message; }
   finally{ $('portraitUploadBtn').disabled = false; }
@@ -350,17 +392,17 @@ function groupByPlace(list){
 }
 function renderGallery(){
   const root = $('gallery-root'); root.innerHTML = '';
-  if(!photos.length){ root.innerHTML = '<p style="color:var(--paper-dim);margin-top:2vh;">No photos yet.</p>'; return; }
+  if(!photos.length){ root.innerHTML = '<p style="color:var(--dim);margin-top:3vh;">No photos yet.</p>'; return; }
   groupByPlace(photos).forEach(g => {
     const h = document.createElement('div');
-    h.innerHTML = `<h3 style="margin-top:3vh;font-size:1.1rem;">${g.place}</h3>`;
+    h.innerHTML = `<h3 style="margin-top:4vh;font-size:1.15rem;font-family:'Fraunces',serif;">${esc(g.place)} <span style="font-family:'Space Grotesk';font-size:.72rem;color:var(--dim);letter-spacing:.1em;">· ${g.items.length}</span></h3>`;
     root.appendChild(h);
     const gal = document.createElement('div'); gal.className = 'gallery';
     g.items.forEach(p => {
       const frame = document.createElement('div'); frame.className = 'frame';
       const isVideo = p.type === 'video';
-      const media = isVideo ? `<video src="${p.video}" muted loop playsinline></video>` : `<img src="${p.thumb||p.image}">`;
-      frame.innerHTML = `${media}<div class="actions"><button class="edit-btn">Edit</button><button class="del-btn">Del</button></div><div class="label">${(p.story||'').slice(0,40)}</div>`;
+      const media = isVideo ? `<video src="${esc(p.video)}" muted loop playsinline></video>` : `<img src="${esc(p.thumb||p.image)}" loading="lazy">`;
+      frame.innerHTML = `${media}<div class="actions"><button class="edit-btn">Edit</button><button class="del-btn">Del</button></div><div class="label">${esc((p.story||'').slice(0,40))}</div>`;
       if(isVideo){
         const v = frame.querySelector('video');
         frame.addEventListener('mouseenter', () => v.play().catch(()=>{}));
@@ -379,7 +421,23 @@ $('addPlaceBtn').addEventListener('click', () => {
   $('newPlaceForm').classList.add('open');
   $('newPlaceForm').scrollIntoView({behavior:'smooth', block:'center'});
 });
-$('npCancel').addEventListener('click', () => { $('newPlaceForm').classList.remove('open'); $('npMsg').textContent=''; });
+$('npCancel').addEventListener('click', () => { $('newPlaceForm').classList.remove('open'); $('npMsg').textContent=''; $('npFile').value=''; $('npFileList').textContent=''; });
+
+/* drag & drop */
+const npDrop = $('npDrop'), npFile = $('npFile');
+npDrop.addEventListener('click', () => npFile.click());
+npDrop.addEventListener('dragover', e => { e.preventDefault(); npDrop.classList.add('over'); });
+npDrop.addEventListener('dragleave', () => npDrop.classList.remove('over'));
+npDrop.addEventListener('drop', e => {
+  e.preventDefault(); npDrop.classList.remove('over');
+  npFile.files = e.dataTransfer.files;
+  showNpFiles();
+});
+npFile.addEventListener('change', showNpFiles);
+function showNpFiles(){
+  const n = npFile.files.length;
+  $('npFileList').textContent = n ? `${n} file${n>1?'s':''} selected: ` + Array.from(npFile.files).map(f => f.name).join(', ').slice(0,140) : '';
+}
 
 $('npSubmit').addEventListener('click', async () => {
   const place = $('npPlace').value.trim();
@@ -416,7 +474,7 @@ $('npSubmit').addEventListener('click', async () => {
     await putFile('data/photos.json', b64Enc(JSON.stringify(updated, null, 2)), `Add ${newEntries.length} item(s): ${place}`, sha);
     photos = updated;
     $('npMsg').className='msg ok'; $('npMsg').textContent = `Added ${newEntries.length} item(s) ✓`;
-    $('npPlace').value=''; $('npRegion').value=''; $('npDate').value=''; $('npStory').value=''; $('npFile').value='';
+    $('npPlace').value=''; $('npRegion').value=''; $('npDate').value=''; $('npStory').value=''; $('npFile').value=''; $('npFileList').textContent='';
     setTimeout(() => { $('newPlaceForm').classList.remove('open'); $('npMsg').textContent=''; }, 1200);
     renderGallery();
   }catch(e){ $('npMsg').className='msg err'; $('npMsg').textContent = e.message; }
@@ -453,13 +511,13 @@ $('epSubmit').addEventListener('click', async () => {
         const ext = compressed.name.split('.').pop() || 'webm';
         const path = `assets/photos/${base}.${ext}`;
         await putFile(path, await fileToBase64Raw(compressed), `Replace video: ${place}`);
-        list[idx].type='video'; list[idx].video=path; list[idx].image=undefined; list[idx].thumb=undefined;
+        list[idx].type='video'; list[idx].video=path; delete list[idx].image; delete list[idx].thumb;
       }else{
         const { full, thumb } = await processImage(file);
         const fullPath = `assets/photos/${base}.jpg`, thumbPath = `assets/photos/${base}-thumb.jpg`;
         await putFile(fullPath, full, `Replace photo: ${place}`);
         await putFile(thumbPath, thumb, `Replace preview: ${place}`);
-        list[idx].type='photo'; list[idx].image=fullPath; list[idx].thumb=thumbPath; list[idx].video=undefined;
+        list[idx].type='photo'; list[idx].image=fullPath; list[idx].thumb=thumbPath; delete list[idx].video;
       }
     }
     list[idx].place = place; list[idx].date = $('epDate').value;
