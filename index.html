@@ -64,6 +64,12 @@
   @media(min-width:900px){.hero-meta{display:block}}
   .scroll-hint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:1;font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);display:flex;flex-direction:column;align-items:center;gap:8px}
   .scroll-hint::after{content:'';width:1px;height:34px;background:linear-gradient(var(--clay),transparent);animation:drip 2s ease infinite}
+  .hero-media img{will-change:transform}
+  @media (prefers-reduced-motion:reduce){
+    .hero-media img,.scroll-hint::after{animation:none}
+    .reveal{animation-duration:.01s}
+    html{scroll-behavior:auto}
+  }
   @keyframes drip{0%{transform:scaleY(0);transform-origin:top}55%{transform:scaleY(1);transform-origin:top}56%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
   .reveal{opacity:0;transform:translateY(36px);animation:rise 1.1s cubic-bezier(.22,1,.36,1) forwards}
@@ -91,11 +97,11 @@
   .frame{position:relative;background:var(--bg2);border-radius:6px;overflow:hidden;cursor:pointer;
     grid-row:span var(--rows,30);opacity:0;transform:translateY(30px) rotateX(4deg);transform-origin:center bottom;
     transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1),box-shadow .45s ease;
-    box-shadow:0 0 0 1px var(--line-soft);will-change:transform}
+    box-shadow:0 0 0 1px var(--line-soft)}
   .frame.in{opacity:1;transform:translateY(0) rotateX(0)}
   .frame.wide{grid-column:span 2}
   @media(max-width:880px){.frame.wide{grid-column:span 1}}
-  .frame img,.frame video{width:100%;height:100%;object-fit:cover;display:block;transition:transform .9s cubic-bezier(.22,1,.36,1),opacity .5s ease;opacity:0;will-change:transform}
+  .frame img,.frame video{width:100%;height:100%;object-fit:cover;display:block;transition:transform .9s cubic-bezier(.22,1,.36,1),opacity .5s ease;opacity:0}
   .frame img.loaded,.frame video.loaded{opacity:1}
   .frame::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,8,7,.55),transparent 42%);opacity:0;transition:opacity .4s ease;pointer-events:none}
   .frame .cap{position:absolute;left:0;right:0;bottom:0;padding:38px 18px 15px;font-size:.8rem;line-height:1.5;color:var(--paper);
@@ -140,7 +146,7 @@
   footer{padding:28px 5vw 44px;display:flex;justify-content:space-between;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);flex-wrap:wrap;gap:12px}
 
   /* ===== lightbox ===== */
-  .lightbox{position:fixed;inset:0;background:rgba(7,7,6,.94);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;z-index:500;padding:5vw;opacity:0;pointer-events:none;transition:opacity .35s ease}
+  .lightbox{position:fixed;inset:0;background:rgba(6,6,5,.97);display:flex;align-items:center;justify-content:center;z-index:500;padding:5vw;opacity:0;pointer-events:none;transition:opacity .35s ease}
   .lightbox.open{opacity:1;pointer-events:auto}
   .lightbox-inner{max-width:1100px;width:100%;text-align:center;transform:scale(.96) translateY(10px);transition:transform .45s cubic-bezier(.22,1,.36,1)}
   .lightbox.open .lightbox-inner{transform:none}
@@ -251,7 +257,12 @@ setLoad(20);
 /* ===== cursor ===== */
 const cursor = document.getElementById('cursor');
 if(matchMedia('(hover:hover) and (pointer:fine)').matches){
-  addEventListener('mousemove', e => { cursor.style.opacity = 1; cursor.style.left = e.clientX+'px'; cursor.style.top = e.clientY+'px'; });
+  let cx=0, cy=0, cPending=false;
+  addEventListener('mousemove', e => {
+    cx=e.clientX; cy=e.clientY;
+    if(cPending) return; cPending=true;
+    requestAnimationFrame(() => { cPending=false; cursor.style.opacity=1; cursor.style.left=cx+'px'; cursor.style.top=cy+'px'; });
+  }, { passive:true });
   addEventListener('mouseover', e => { cursor.classList.toggle('grow', !!e.target.closest('a,button,.frame')); });
 }
 
@@ -412,18 +423,25 @@ fetch('data/photos.json', { cache:'no-store' })
   .then(list => {
     photos = Array.isArray(list) ? list : [];
     renderGallery();
-    const first = photos.find(p => p.type !== 'video' && (p.image || p.thumb));
+    const first = photos.find(p => p.type !== 'video' && (p.thumb || p.image));
     if(first){
-      const media = document.getElementById('heroMedia');
-      const im = new Image();
-      im.alt = ''; im.src = first.image || first.thumb;
-      im.addEventListener('load', () => im.classList.add('on'));
-      media.appendChild(im);
+      const loadHero = () => {
+        const media = document.getElementById('heroMedia');
+        if(media.firstChild) return;
+        const im = new Image();
+        im.alt = ''; im.decoding = 'async';
+        im.src = first.thumb || first.image;   /* small file = fast */
+        im.addEventListener('load', () => im.classList.add('on'), { once:true });
+        media.appendChild(im);
+      };
+      if('requestIdleCallback' in window) requestIdleCallback(loadHero, { timeout:1200 });
+      else setTimeout(loadHero, 300);
     }
     setLoad(100); loadDone = true; setLoad(100);
   })
   .catch(() => { photos = []; renderGallery(); setLoad(100); loadDone = true; setLoad(100); });
-setTimeout(() => { loadDone = true; setLoad(100); }, 4000); /* never trap the visitor */
+window.addEventListener('load', () => { loadDone = true; setLoad(100); });
+setTimeout(() => { loadDone = true; setLoad(100); }, 1500); /* never trap the visitor */
 
 /* ===== lightbox ===== */
 let current = 0;
