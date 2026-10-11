@@ -253,5 +253,15 @@
     "type": "photo",
     "image": "assets/photos/kahlenburg-vienna-1791734264710-0.jpg",
     "thumb": "assets/photos/kahlenburg-vienna-1791734264710-0-thumb.jpg"
+  },
+  {
+    "id": "p1791734486078-0",
+    "place": "Vienna",
+    "region": "",
+    "date": "",
+    "story": "",
+    "type": "photo",
+    "image": "assets/photos/vienna-1791734486078-0.jpg",
+    "thumb": "assets/photos/vienna-1791734486078-0-thumb.jpg"
   }
 ]
